@@ -17,8 +17,10 @@ PanelWindow {
     implicitWidth: 320
     color: "transparent"
     focusable: true
+    
     WlrLayershell.keyboardFocus: root.btVisible ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
-    Behavior on margins.right { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+    
+    Behavior on margins.right { NumberAnimation { duration: 320; easing.type: Easing.OutExpo } }
 
     Item {
         anchors.fill: parent
@@ -31,71 +33,81 @@ PanelWindow {
             }
         }
 
+        // Main glassmorphic container
         Rectangle {
             anchors.fill: parent
-            // Безопасный вызов цвета
-            color: {
-                let c = root.walBackground;
-                if (!c || typeof c.r === 'undefined') return Qt.rgba(0.1, 0.1, 0.1, 0.7);
-                return Qt.rgba(c.r, c.g, c.b, 0.7);
-            }
-            radius: 20
+            color: Qt.rgba(root.walBackground.r, root.walBackground.g, root.walBackground.b, 0.75)
+            radius: 18
+            border.width: 1
+            border.color: Qt.rgba(root.walColor5.r, root.walColor5.g, root.walColor5.b, 0.25)
 
             ColumnLayout {
                 anchors.fill: parent
-                anchors.margins: 18
+                anchors.margins: 16
                 spacing: 12
 
-                // --- ШАПКА BLUETOOTH ---
+                // --- HEADER BLUETOOTH ---
                 RowLayout {
                     Layout.fillWidth: true
+                    spacing: 8
+                    
                     Text {
                         text: "󰂯"
                         color: root.walColor5
-                        font.pixelSize: 22
+                        font.pixelSize: 20
                         font.family: "JetBrainsMono Nerd Font"
                     }
                     Text {
                         text: "Bluetooth"
                         color: root.walColor5
-                        font.pixelSize: 16
+                        font.pixelSize: 15
                         font.bold: true
                         font.family: "JetBrainsMono Nerd Font"
                     }
+                    
                     Item { Layout.fillWidth: true }
+                    
+                    // Custom Material Toggle Switch
                     Rectangle {
-                        width: 44
-                        height: 24
-                        radius: 12
-                        // ИСПРАВЛЕНО: Берем состояние из сервиса
-                        color: netService.btEnabled ? root.walColor5 : Qt.rgba(0.3, 0.3, 0.3, 0.5)
-                        Behavior on color { ColorAnimation { duration: 200 } }
+                        id: toggleTrack
+                        width: 42
+                        height: 22
+                        radius: 11
+                        color: netService.btEnabled ? root.walColor5 : Qt.rgba(1, 1, 1, 0.15)
+                        border.width: 1
+                        border.color: netService.btEnabled ? Qt.rgba(0, 0, 0, 0.1) : Qt.rgba(1, 1, 1, 0.1)
+                        
+                        Behavior on color { ColorAnimation { duration: 250; easing.type: Easing.OutQuad } }
+                        
                         Rectangle {
-                            width: 20
-                            height: 20
-                            radius: 10
+                            id: toggleThumb
+                            width: toggleMouseArea.pressed ? 20 : 16
+                            height: 16
+                            radius: 8
                             y: 2
-                            // ИСПРАВЛЕНО: Берем состояние из сервиса
-                            x: netService.btEnabled ? 22 : 2
-                            color: root.walBackground
-                            Behavior on x { NumberAnimation { duration: 200; easing.type: Easing.OutCubic } }
+                            x: netService.btEnabled ? (parent.width - width - 3) : 3
+                            color: netService.btEnabled ? root.walBackground : root.walForeground
+                            
+                            Behavior on x { NumberAnimation { duration: 250; easing.type: Easing.OutBack } }
+                            Behavior on width { NumberAnimation { duration: 150 } }
                         }
+                        
                         MouseArea {
+                            id: toggleMouseArea
                             anchors.fill: parent
+                            hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
-                            onClicked: {
-                                // ИСПРАВЛЕНО: Вызываем функцию сервиса
-                                netService.toggleBtAdapter()
-                            }
+                            onClicked: netService.toggleBtAdapter()
                         }
                     }
                 }
 
-                // --- СПИСОК СОПРЯЖЕННЫХ УСТРОЙСТВ ---
+                // --- PAIRED DEVICES LIST ---
                 Text {
                     text: "Paired Devices"
                     color: root.walColor8
                     font.pixelSize: 11
+                    font.bold: true
                     font.family: "JetBrainsMono Nerd Font"
                     visible: netService.btEnabled
                 }
@@ -103,22 +115,23 @@ PanelWindow {
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 180
-                    color: Qt.rgba(0, 0, 0, 0.3)
+                    color: Qt.rgba(0, 0, 0, 0.25)
                     radius: 12
+                    border.width: 1
+                    border.color: Qt.rgba(1, 1, 1, 0.05)
                     clip: true
                     visible: netService.btEnabled
                     
                     ListView {
+                        id: pairedList
                         anchors.fill: parent
-                        anchors.margins: 6
-                        spacing: 4
+                        anchors.margins: 4
+                        spacing: 2
                         boundsBehavior: Flickable.StopAtBounds
-                        // ИСПРАВЛЕНО: Модель из сервиса
                         model: netService.btPairedDevices
                         
                         delegate: PairedDeviceDelegate {
                             devData: modelData
-                            // ИСПРАВЛЕНО
                             connectingMac: netService.btConnectingMAC
                             walColor1: root.walColor1
                             walColor2: root.walColor2
@@ -127,65 +140,93 @@ PanelWindow {
                             walForeground: root.walForeground
                             
                             onToggleConnection: (mac, isConnected) => {
-                                // ИСПРАВЛЕНО
                                 if (isConnected) netService.disconnectBt(mac)
                                 else netService.connectBt(mac)
                             }
                             
                             onForgetDevice: (mac) => {
-                                // ИСПРАВЛЕНО
                                 netService.forgetBt(mac)
                             }
                         }
-                        ScrollBar.vertical: ScrollBar { active: true; width: 4 }
+                        ScrollBar.vertical: ScrollBar { 
+                            active: pairedList.moving || pairedList.flickable
+                            width: 4 
+                        }
                     }
                     
                     Text {
                         anchors.centerIn: parent
-                        // ИСПРАВЛЕНО
                         visible: netService.btPairedDevices.length === 0
                         text: "No paired devices"
-                        color: root.walColor8
-                        font.pixelSize: 12
-                        font.family: "JetBrainsMono Nerd Font"
-                    }
-                }
-
-                // --- КНОПКА СКАНИРОВАНИЯ ---
-                RowLayout {
-                    Layout.fillWidth: true
-                    visible: netService.btEnabled
-                    Text {
-                        text: "Available Devices"
                         color: root.walColor8
                         font.pixelSize: 11
                         font.family: "JetBrainsMono Nerd Font"
                     }
+                }
+
+                // --- AVAILABLE DEVICES SECTION & SCAN BUTTON ---
+                RowLayout {
+                    Layout.fillWidth: true
+                    visible: netService.btEnabled
+                    
+                    Text {
+                        text: "Available Devices"
+                        color: root.walColor8
+                        font.pixelSize: 11
+                        font.bold: true
+                        font.family: "JetBrainsMono Nerd Font"
+                    }
+                    
                     Item { Layout.fillWidth: true }
+                    
+                    // Pill Styled Scan Button
                     Rectangle {
-                        width: 60
+                        width: 70
                         height: 24
-                        radius: 6
-                        color: btScanBtnMa.containsMouse ? Qt.rgba(root.walColor5.r, root.walColor5.g, root.walColor5.b, 0.2) : Qt.rgba(0, 0, 0, 0.3)
-                        Text {
+                        radius: 12
+                        color: btScanBtnMa.containsMouse ? Qt.rgba(root.walColor5.r, root.walColor5.g, root.walColor5.b, 0.2) : Qt.rgba(1, 1, 1, 0.08)
+                        border.width: 1
+                        border.color: btScanBtnMa.containsMouse ? Qt.rgba(root.walColor5.r, root.walColor5.g, root.walColor5.b, 0.3) : "transparent"
+                        
+                        Behavior on color { ColorAnimation { duration: 150 } }
+                        Behavior on border.color { ColorAnimation { duration: 150 } }
+
+                        RowLayout {
                             anchors.centerIn: parent
-                            // ИСПРАВЛЕНО
-                            text: netService.btScanning ? "Scanning" : "Scan"
-                            color: root.walColor5
-                            font.pixelSize: 10
-                            font.family: "JetBrainsMono Nerd Font"
+                            spacing: 4
+                            
+                            Text {
+                                text: netService.btScanning ? "󰑓" : "󰂰"
+                                color: root.walColor5
+                                font.pixelSize: 11
+                                font.family: "JetBrainsMono Nerd Font"
+                                
+                                RotationAnimation on rotation {
+                                    from: 0; to: 360
+                                    duration: 1000
+                                    loops: Animation.Infinite
+                                    running: netService.btScanning
+                                }
+                            }
+
+                            Text {
+                                text: netService.btScanning ? "Scan..." : "Scan"
+                                color: root.walColor5
+                                font.pixelSize: 10
+                                font.bold: true
+                                font.family: "JetBrainsMono Nerd Font"
+                            }
                         }
+
                         MouseArea {
                             id: btScanBtnMa
                             anchors.fill: parent
                             hoverEnabled: true
                             cursorShape: Qt.PointingHandCursor
                             onClicked: {
-                                // ИСПРАВЛЕНО: Вызов сканирования теперь через сервис
                                 if (!netService.btScanning) {
                                     netService.btScanning = true
                                     netService.btAvailableDevices = []
-                                    // Чтобы это сработало, нам нужно добавить функцию startScan в сервис
                                     netService.startBluetoothScan() 
                                 }
                             }
@@ -193,51 +234,54 @@ PanelWindow {
                     }
                 }
 
-                // --- СПИСОК ДОСТУПНЫХ УСТРОЙСТВ ---
+                // --- AVAILABLE DEVICES LIST ---
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    color: Qt.rgba(0, 0, 0, 0.3)
+                    color: Qt.rgba(0, 0, 0, 0.25)
                     radius: 12
+                    border.width: 1
+                    border.color: Qt.rgba(1, 1, 1, 0.05)
                     clip: true
                     visible: netService.btEnabled
                     
                     ListView {
+                        id: availableList
                         anchors.fill: parent
-                        anchors.margins: 6
-                        spacing: 4
+                        anchors.margins: 4
+                        spacing: 2
                         boundsBehavior: Flickable.StopAtBounds
-                        // ИСПРАВЛЕНО: Модель из сервиса
                         model: netService.btAvailableDevices
                         
                         delegate: AvailableDeviceDelegate {
                             devData: modelData
-                            // ИСПРАВЛЕНО
                             connectingMac: netService.btConnectingMAC
+                            walColor5: root.walColor5
                             walColor8: root.walColor8
                             walForeground: root.walForeground
                             
                             onPairDevice: (mac) => {
-                                // ИСПРАВЛЕНО
                                 netService.pairBt(mac)
                             }
                         }
-                        ScrollBar.vertical: ScrollBar { active: true; width: 4 }
+                        ScrollBar.vertical: ScrollBar { 
+                            active: availableList.moving || availableList.flickable
+                            width: 4 
+                        }
                     }
                     
                     Text {
                         anchors.centerIn: parent
-                        // ИСПРАВЛЕНО
                         visible: netService.btAvailableDevices.length === 0 && !netService.btScanning
                         text: "Press Scan to find devices"
                         color: root.walColor8
                         font.pixelSize: 11
                         font.family: "JetBrainsMono Nerd Font"
                     }
+                    
                     Text {
                         anchors.centerIn: parent
-                        // ИСПРАВЛЕНО
-                        visible: netService.btScanning
+                        visible: netService.btScanning && netService.btAvailableDevices.length === 0
                         text: "Scanning..."
                         color: root.walColor8
                         font.pixelSize: 11
@@ -245,19 +289,31 @@ PanelWindow {
                     }
                 }
 
-                // --- ЭКРАН ВЫКЛЮЧЕННОГО BLUETOOTH ---
+                // --- BLUETOOTH OFF STATE ---
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    // ИСПРАВЛЕНО
                     visible: !netService.btEnabled
                     color: "transparent"
-                    Text {
+                    
+                    ColumnLayout {
                         anchors.centerIn: parent
-                        text: "Bluetooth is off"
-                        color: root.walColor8
-                        font.pixelSize: 13
-                        font.family: "JetBrainsMono Nerd Font"
+                        spacing: 8
+                        
+                        Text {
+                            text: "󰂲"
+                            color: root.walColor8
+                            font.pixelSize: 32
+                            font.family: "JetBrainsMono Nerd Font"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
+                        Text {
+                            text: "Bluetooth is turned off"
+                            color: root.walColor8
+                            font.pixelSize: 12
+                            font.family: "JetBrainsMono Nerd Font"
+                            Layout.alignment: Qt.AlignHCenter
+                        }
                     }
                 }
             }

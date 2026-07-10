@@ -11,48 +11,51 @@ Column {
     property color walForeground
     property color walBackground
 
-    // Сигнал, который передаст введенный пароль и логин
+    // Signal when login and password are submitted
     signal submitCredentials(string login, string password)
 
-    // Позволяем вызывать фокус извне
+    // Visibility state of password
+    property bool showPassword: false
+
     function forceInputFocus() {
         if (isEnterprise) {
             wifiLoginInput.forceActiveFocus()
-        }else{
+        } else {
             wifiPassInput.forceActiveFocus()
         }
-
     }
 
-    function triggerSubmit(){
-        if (isEnterprise){
-            if (wifiLoginInput.text.length > 0 && wifiPassInput.text.length > 0){
+    function triggerSubmit() {
+        if (isEnterprise) {
+            if (wifiLoginInput.text.length > 0 && wifiPassInput.text.length > 0) {
                 passInputRoot.submitCredentials(wifiLoginInput.text, wifiPassInput.text)
                 wifiLoginInput.text = ''
                 wifiPassInput.text = ''
-
             }
-        }else{
-            if (wifiPassInput.text.length > 0){
+        } else {
+            if (wifiPassInput.text.length > 0) {
                 passInputRoot.submitCredentials('', wifiPassInput.text)
                 wifiPassInput.text = ''
-
             }
         }
     }
- 
 
     Layout.fillWidth: true
     visible: targetSSID !== ""
     width: parent ? parent.width : 300
     spacing: 8
 
-    Rectangle{
+    // --- Enterprise Identity Field ---
+    Rectangle {
         width: parent.width  
         height: 36           
         radius: 10
-        color: Qt.rgba(0,0,0,0.3)
+        color: Qt.rgba(0, 0, 0, 0.3)
+        border.width: 1
+        border.color: wifiLoginInput.activeFocus ? walColor5 : Qt.rgba(1, 1, 1, 0.08)
         visible: passInputRoot.isEnterprise
+
+        Behavior on border.color { ColorAnimation { duration: 150 } }
 
         RowLayout {
             anchors.fill: parent
@@ -61,9 +64,9 @@ Column {
             spacing: 8
             
             Text {
-                text: "󰌾"
-                color: walColor8
-                font.pixelSize: 12
+                text: "󰧱"
+                color: wifiLoginInput.activeFocus ? walColor5 : walColor8
+                font.pixelSize: 13
                 font.family: "JetBrainsMono Nerd Font"
             }
             
@@ -75,12 +78,11 @@ Column {
                 font.pixelSize: 12
                 font.family: "JetBrainsMono Nerd Font"
                 verticalAlignment: TextInput.AlignVCenter
-                echoMode: TextInput.Password
                 clip: true
                 activeFocusOnPress: true
                 
                 Text {
-                    text: "Password for " + targetSSID
+                    text: "Username for " + targetSSID
                     color: walColor8
                     visible: !parent.text && !parent.activeFocus
                     anchors.left: parent.left
@@ -94,22 +96,27 @@ Column {
         }
     }
 
-    Rectangle{
+    // --- Password Field ---
+    Rectangle {
         width: parent.width  
         height: 36
         radius: 10
-        color: Qt.rgba(0,0,0,0.3)
+        color: Qt.rgba(0, 0, 0, 0.3)
+        border.width: 1
+        border.color: wifiPassInput.activeFocus ? walColor5 : Qt.rgba(1, 1, 1, 0.08)
+
+        Behavior on border.color { ColorAnimation { duration: 150 } }
 
         RowLayout {
             anchors.fill: parent
             anchors.leftMargin: 12
-            anchors.rightMargin: 12
+            anchors.rightMargin: 8
             spacing: 8
             
             Text {
                 text: "󰌾"
-                color: walColor8
-                font.pixelSize: 12
+                color: wifiPassInput.activeFocus ? walColor5 : walColor8
+                font.pixelSize: 13
                 font.family: "JetBrainsMono Nerd Font"
             } 
 
@@ -121,7 +128,7 @@ Column {
                 font.pixelSize: 12
                 font.family: "JetBrainsMono Nerd Font"
                 verticalAlignment: TextInput.AlignVCenter
-                echoMode: TextInput.Password
+                echoMode: passInputRoot.showPassword ? TextInput.Normal : TextInput.Password
                 clip: true
                 activeFocusOnPress: true
             
@@ -136,34 +143,56 @@ Column {
                 Keys.onReturnPressed: passInputRoot.triggerSubmit()
             }
 
-        
-    
-
-        
-        Rectangle {
-            width: 24
-            height: 24
-            radius: 6
-            color: walColor5
-            Text {
-                anchors.centerIn: parent
-                text: "→"
-                color: walBackground
-                font.pixelSize: 11
-                font.bold: true
-                font.family: "JetBrainsMono Nerd Font"
+            // Eye Toggle to Show/Hide Password
+            Rectangle {
+                width: 24
+                height: 24
+                radius: 6
+                color: eyeMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
+                
+                Text {
+                    anchors.centerIn: parent
+                    text: passInputRoot.showPassword ? "󰈈" : "󰈉"
+                    color: passInputRoot.showPassword ? walColor5 : walColor8
+                    font.pixelSize: 14
+                    font.family: "JetBrainsMono Nerd Font"
+                }
+                
+                MouseArea {
+                    id: eyeMa
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: passInputRoot.showPassword = !passInputRoot.showPassword
+                }
             }
-            MouseArea {
-                anchors.fill: parent
-                cursorShape: Qt.PointingHandCursor
-                onClicked: {
-                    if (wifiPassInput.text.length > 0) {
-                        passInputRoot.triggerSubmit(wifiPassInput.text)
-                        wifiPassInput.text = ""
-                    }
+        
+            // Submit Button
+            Rectangle {
+                width: 24
+                height: 24
+                radius: 6
+                color: submitMa.containsMouse ? Qt.rgba(walColor5.r, walColor5.g, walColor5.b, 0.8) : walColor5
+                
+                Behavior on color { ColorAnimation { duration: 150 } }
+
+                Text {
+                    anchors.centerIn: parent
+                    text: "󰄬"
+                    color: walBackground
+                    font.pixelSize: 13
+                    font.bold: true
+                    font.family: "JetBrainsMono Nerd Font"
+                }
+                
+                MouseArea {
+                    id: submitMa
+                    anchors.fill: parent
+                    hoverEnabled: true
+                    cursorShape: Qt.PointingHandCursor
+                    onClicked: passInputRoot.triggerSubmit()
                 }
             }
         }
-    }
     }
 }
