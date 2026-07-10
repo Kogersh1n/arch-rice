@@ -3,7 +3,7 @@
 cd "$(dirname "$0")"
 
 [[ ! -f /etc/arch-release ]] && echo "This script is designed for Arch Linux." && exit 1
-[[ ! -d .config ]] && echo "Can't find .config directory in repository." && exit 1
+[[ ! -d config ]] && echo "Can't find config directory in repository." && exit 1
 
 install_deps() {
   echo "Installing official packages..."
@@ -53,8 +53,8 @@ install_configs() {
     if [[ -e ~/.config/"$dir" ]]; then
       mv ~/.config/"$dir" "$backup"/
     fi
-    if [[ -d .config/"$dir" ]]; then
-      cp -r .config/"$dir" ~/.config/
+    if [[ -d config/"$dir" ]]; then
+      cp -r config/"$dir" ~/.config/
     fi
   done
 
@@ -71,8 +71,8 @@ install_configs() {
     if [[ -e ~/.config/"$file" ]]; then
       mv ~/.config/"$file" "$backup"/
     fi
-    if [[ -f .config/"$file" ]]; then
-      cp .config/"$file" ~/.config/
+    if [[ -f config/"$file" ]]; then
+      cp config/"$file" ~/.config/
     fi
   done
 
@@ -86,11 +86,13 @@ install_configs() {
   )
 
   for file in "${HOME_FILES[@]}"; do
+    # File name in repository does not start with a dot
+    repo_file="${file#.}"
     if [[ -e ~/"$file" ]]; then
       mv ~/"$file" "$backup"/
     fi
-    if [[ -f "$file" ]]; then
-      cp "$file" ~/
+    if [[ -f "$repo_file" ]]; then
+      cp "$repo_file" ~/"$file"
     fi
   done
 

@@ -6,7 +6,7 @@ REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 echo "Syncing configs from home directories to repo..."
 
 # Create necessary directories
-mkdir -p "$REPO_DIR/.config"
+mkdir -p "$REPO_DIR/config"
 
 # Config directories to copy
 CONFIG_DIRS=(
@@ -29,8 +29,8 @@ CONFIG_DIRS=(
 for dir in "${CONFIG_DIRS[@]}"; do
   if [ -d "$HOME/.config/$dir" ]; then
     echo "Copying ~/.config/$dir..."
-    rm -rf "$REPO_DIR/.config/$dir"
-    cp -r "$HOME/.config/$dir" "$REPO_DIR/.config/"
+    rm -rf "$REPO_DIR/config/$dir"
+    cp -r "$HOME/.config/$dir" "$REPO_DIR/config/"
   fi
 done
 
@@ -46,7 +46,7 @@ CONFIG_FILES=(
 for file in "${CONFIG_FILES[@]}"; do
   if [ -f "$HOME/.config/$file" ]; then
     echo "Copying ~/.config/$file..."
-    cp "$HOME/.config/$file" "$REPO_DIR/.config/"
+    cp "$HOME/.config/$file" "$REPO_DIR/config/"
   fi
 done
 
@@ -61,8 +61,10 @@ HOME_FILES=(
 
 for file in "${HOME_FILES[@]}"; do
   if [ -f "$HOME/$file" ]; then
-    echo "Copying ~/$file..."
-    cp "$HOME/$file" "$REPO_DIR/"
+    # strip dot from filename for repo
+    repo_file="${file#.}"
+    echo "Copying ~/$file -> $repo_file..."
+    cp "$HOME/$file" "$REPO_DIR/$repo_file"
   fi
 done
 
