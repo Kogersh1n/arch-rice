@@ -10,3 +10,4 @@ alias grep='grep --color=auto'
 PS1='[\u@\h \W]\$ '
 
 . "$HOME/.local/bin/env"
+export QS_CONFIG_NAME=caelestia

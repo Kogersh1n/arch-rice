@@ -9,6 +9,11 @@ import qs.modules.nexus
 Scope {
     id: root
 
+    DashboardState {
+        id: dashState
+        reloadableId: "dashboardState"
+    }
+
     property bool launcherInterrupted
     readonly property bool hasFullscreen: Hypr.focusedWorkspace?.toplevels.values.some(t => t.lastIpcObject.fullscreen > 1) ?? false
 
@@ -161,6 +166,43 @@ Scope {
         }
 
         target: "toaster"
+    }
+
+    IpcHandler {
+        function toggle(): void {
+            if (root.hasFullscreen)
+                return;
+            const visibilities = Visibilities.getForActive();
+            if (!visibilities.dashboard) {
+                dashState.currentTab = 1;
+                visibilities.dashboard = true;
+            } else if (dashState.currentTab === 1) {
+                visibilities.dashboard = false;
+            } else {
+                dashState.currentTab = 1;
+            }
+        }
+        target: "music"
+    }
+
+    IpcHandler {
+        function toggle(): void {
+            if (root.hasFullscreen)
+                return;
+            const visibilities = Visibilities.getForActive();
+            visibilities.launcher = !visibilities.launcher;
+        }
+        target: "launcher"
+    }
+
+    IpcHandler {
+        function toggle(): void {
+            if (root.hasFullscreen)
+                return;
+            const visibilities = Visibilities.getForActive();
+            visibilities.dashboard = !visibilities.dashboard;
+        }
+        target: "dashboard"
     }
 
     LoggingCategory {

@@ -79,6 +79,16 @@ Searcher {
             return root.list.map(w => w.path).join("\n");
         }
 
+        function toggle(): void {
+            const visibilities = Visibilities.getForActive();
+            if (visibilities.launcher) {
+                visibilities.launcher = false;
+            } else {
+                Visibilities.initialSearchText = `${GlobalConfig.launcher.actionPrefix}wallpaper `;
+                visibilities.launcher = true;
+            }
+        }
+
         target: "wallpaper"
     }
 

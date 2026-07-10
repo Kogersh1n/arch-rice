@@ -132,8 +132,12 @@ Item {
 
             Connections {
                 function onLauncherChanged(): void {
-                    if (!root.visibilities.launcher)
+                    if (!root.visibilities.launcher) {
                         search.text = "";
+                    } else if (Visibilities.initialSearchText) {
+                        search.text = Visibilities.initialSearchText;
+                        Visibilities.initialSearchText = "";
+                    }
                 }
 
                 function onSessionChanged(): void {
