@@ -18,15 +18,20 @@ Item {
             width: parent.width
             height: parent.height
             source: activeGifRoot.gifSource
-            fillMode: Image.PreserveAspectFit
+            fillMode: Image.PreserveAspectCrop
             smooth: true
-            
-            // Управляем паузой
             paused: activeGifRoot.status !== "Playing"
             cache: false
             asynchronous: true
             
-            // Страховка: если гифка прогрузилась, а трек уже играет - принудительно крутим
+            // Vinyl Mode Rotation Animation
+            RotationAnimation on rotation {
+                from: 0; to: 360
+                duration: 12000
+                loops: Animation.Infinite
+                running: activeGifRoot.status === "Playing"
+            }
+
             onStatusChanged: {
                 if (status === AnimatedImage.Ready && activeGifRoot.status === "Playing") {
                     playing = true
@@ -35,19 +40,19 @@ Item {
         }
     }
 
-    Item {
+    Rectangle {
         id: gifContainer
         anchors.bottom: parent.bottom
         anchors.horizontalCenter: parent.horizontalCenter
-        width: 200
-        height: 160
+        width: 140
+        height: 140
+        radius: 70
+        color: "transparent"
+        clip: true
 
-        // --- 2. ЯДЕРНАЯ ОПЦИЯ ЛОАДЕРА ---
         Loader {
             id: danceGifLoader
             anchors.fill: parent
-            // Если панель активна И ссылка не пустая -> создаем гифку. 
-            // В момент переключения трека (наши 50мс) ссылка "", лоадер получает null и УБИВАЕТ старую гифку!
             sourceComponent: (activeGifRoot.isActive && activeGifRoot.gifSource !== "") ? gifTemplate : null
         }
     }
@@ -61,7 +66,7 @@ Item {
         color: gifEditMa.containsMouse ? Qt.rgba(1,1,1,0.2) : Qt.rgba(0,0,0,0.3)
         Behavior on color { ColorAnimation { duration: 150 } }
 
-        Text { anchors.centerIn: parent; text: "󰏫"; color: root.walForeground; font.pixelSize: 12; font.family: "JetBrainsMono Nerd Font" }
+        Text { anchors.centerIn: parent; text: "󰏫"; color: root.walForeground; font.pixelSize: 14; font.family: "JetBrainsMono Nerd Font" }
 
         MouseArea {
             id: gifEditMa

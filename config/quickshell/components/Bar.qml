@@ -10,47 +10,61 @@ import "../components/bar"
 PanelWindow {
     id: bar
     visible: true
-    // exclusionMode: Quickshell.Exclusive
-    WlrLayershell.layer: WlrLayershell.Top // Было WlrLayer.Top
+    WlrLayershell.layer: WlrLayershell.Top
     WlrLayershell.namespace: "quickshell"
-    anchors { top: true; left: true; right: true }
-    margins { top: 0; left: 0; right: 0 }
-    implicitHeight: 32
+    
+    // Left Anchors for Vertical Bar
+    anchors { left: true; top: true; bottom: true }
+    margins { top: 12; bottom: 12; left: 12 }
+    implicitWidth: 46
     color: "transparent"
 
     Item {
         anchors.fill: parent
 
-        // ЛЕВАЯ ЧАСТЬ (Меню, Часы, Воркспейсы)
-        Row {
-            id: leftSection
-            anchors.left: parent.left
-            anchors.top: parent.top
-            anchors.leftMargin: 8
-            height: 32 // notchHeight
-            spacing: 6
-
-            LauncherWidget {}
-            ClockWidget {}
-            WorkspacesWidget {}
+        // Floating Vertical Slab Background
+        Rectangle {
+            anchors.fill: parent
+            color: Qt.rgba(root.walBackground.r, root.walBackground.g, root.walBackground.b, root.theme.panelOpacity)
+            radius: root.theme.panelRadius
+            border.width: 1
+            border.color: Qt.rgba(1, 1, 1, root.theme.borderOpacity)
         }
 
-        // ЦЕНТРАЛЬНАЯ ЧАСТЬ (Медиа)
-        MediaWidget {
-            anchors.horizontalCenter: parent.horizontalCenter
-            anchors.top: parent.top
-        }
+        // Vertical Layout Stacking
+        ColumnLayout {
+            anchors.fill: parent
+            anchors.topMargin: 12
+            anchors.bottomMargin: 12
+            spacing: 12
 
-        // ПРАВАЯ ЧАСТЬ (Система)
-        Row {
-            id: rightSection
-            anchors.right: parent.right
-            anchors.top: parent.top
-            anchors.rightMargin: 8
-            height: 32 // notchHeight
-            spacing: 6
+            // Top section: Launcher & Workspaces
+            Column {
+                Layout.alignment: Qt.AlignHCenter
+                spacing: 8
+                LauncherWidget {}
+                WallpaperWidget {}
+                WorkspacesWidget {}
+            }
 
-            SystemWidget {}
+            // Center Spacer/Media section
+            Item {
+                Layout.fillHeight: true
+                Layout.fillWidth: true
+                
+                MediaWidget {
+                    anchors.centerIn: parent
+                }
+            }
+
+            // Bottom section: System Status & Clock
+            Column {
+                Layout.alignment: Qt.AlignHCenter
+                spacing: 8
+                
+                SystemWidget {}
+                ClockWidget {}
+            }
         }
     }
 }

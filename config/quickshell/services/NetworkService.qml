@@ -354,4 +354,14 @@ Item {
 
     Timer { id: btToggleDelayTimer; interval: 1000; repeat: false; onTriggered: refreshBluetooth() }
     Timer { id: btActionDelayTimer; interval: 1500; repeat: false; onTriggered: refreshBluetooth() }
+
+    Timer {
+        id: periodicUpdateTimer
+        interval: 10000; running: true; repeat: true; triggeredOnStart: true
+        onTriggered: {
+            if (!wifiStatusProc.running) wifiStatusProc.running = true
+            if (!wifiCurrentProc.running) wifiCurrentProc.running = true
+            if (!btStatusProc.running) btStatusProc.running = true
+        }
+    }
 }

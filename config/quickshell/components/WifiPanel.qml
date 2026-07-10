@@ -11,8 +11,8 @@ PanelWindow {
     id: wifiPanel
     visible: true
     exclusionMode: ExclusionMode.Ignore
-    anchors { top: true; right: true }
-    margins { top: 40; right: root.wifiVisible ? 6 : -350 }
+    anchors { bottom: true; left: true }
+    margins { bottom: root.wifiVisible ? 12 : -600; left: 70 }
     implicitHeight: 440
     implicitWidth: 320
     color: "transparent"
@@ -22,7 +22,7 @@ PanelWindow {
     
     WlrLayershell.keyboardFocus: passwordSSID !== "" ? WlrKeyboardFocus.Exclusive : (root.wifiVisible ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None)
     
-    Behavior on margins.right { NumberAnimation { duration: 320; easing.type: Easing.OutExpo } }
+    Behavior on margins.bottom { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
 
     Shortcut {
         sequence: "Escape"
@@ -40,50 +40,19 @@ PanelWindow {
     Item {
         anchors.fill: parent
 
-        // Main glassmorphic container
+        // Sleek, minimal background
         Rectangle {
             anchors.fill: parent
-            color: Qt.rgba(root.walBackground.r, root.walBackground.g, root.walBackground.b, 0.78)
-            radius: 20
+            color: Qt.rgba(root.walBackground.r, root.walBackground.g, root.walBackground.b, root.theme.panelOpacity)
+            radius: root.theme.panelRadius
             border.width: 1
-            border.color: Qt.rgba(root.walColor5.r, root.walColor5.g, root.walColor5.b, 0.25)
+            border.color: Qt.rgba(1, 1, 1, root.theme.borderOpacity)
             clip: true
-
-            // --- CREATIVE BACKGROUND DECORATION (Blobs for Glassmorphic Depth) ---
-            Rectangle {
-                width: 140
-                height: 140
-                radius: 70
-                color: Qt.rgba(root.walColor5.r, root.walColor5.g, root.walColor5.b, 0.12)
-                x: -30
-                y: -30
-                
-                // Subtle breathing animation for a living look
-                SequentialAnimation on scale {
-                    loops: Animation.Infinite
-                    NumberAnimation { from: 1.0; to: 1.15; duration: 4000; easing.type: Easing.InOutSine }
-                    NumberAnimation { from: 1.15; to: 1.0; duration: 4000; easing.type: Easing.InOutSine }
-                }
-            }
-            Rectangle {
-                width: 120
-                height: 120
-                radius: 60
-                color: Qt.rgba(root.walColor2.r, root.walColor2.g, root.walColor2.b, 0.08)
-                x: parent.width - 80
-                y: parent.height - 80
-                
-                SequentialAnimation on scale {
-                    loops: Animation.Infinite
-                    NumberAnimation { from: 1.15; to: 0.95; duration: 5000; easing.type: Easing.InOutSine }
-                    NumberAnimation { from: 0.95; to: 1.15; duration: 5000; easing.type: Easing.InOutSine }
-                }
-            }
 
             ColumnLayout {
                 anchors.fill: parent
-                anchors.margins: 18
-                spacing: 12
+                anchors.margins: 20
+                spacing: 10
 
                 // --- HEADER WI-FI ---
                 RowLayout {
@@ -93,7 +62,7 @@ PanelWindow {
                     Text {
                         text: "󰤨"
                         color: root.walColor5
-                        font.pixelSize: 22
+                        font.pixelSize: 20
                         font.family: "JetBrainsMono Nerd Font"
                     }
                     
@@ -103,7 +72,7 @@ PanelWindow {
                             text: "Wi-Fi Network"
                             color: root.walColor5
                             font.pixelSize: 15
-                            font.bold: true
+                            font.weight: Font.Medium
                             font.family: "JetBrainsMono Nerd Font"
                         }
                         Text {
@@ -111,8 +80,8 @@ PanelWindow {
                                   (netService.wifiConnecting ? "Connecting..." : 
                                   (netService.wifiCurrentSSID !== "" ? "Connected to " + netService.wifiCurrentSSID : "Ready to connect"))
                             color: root.walColor8
-                            font.pixelSize: 9
-                            font.family: "JetBrainsMono Nerd Font"
+                            font.pixelSize: 13
+                            font.family: "Inter", "sans-serif"
                         }
                     }
                     
@@ -126,7 +95,7 @@ PanelWindow {
                         radius: 11
                         color: netService.wifiEnabled ? root.walColor5 : Qt.rgba(1, 1, 1, 0.15)
                         border.width: 1
-                        border.color: netService.wifiEnabled ? Qt.rgba(0, 0, 0, 0.1) : Qt.rgba(1, 1, 1, 0.1)
+                        border.color: netService.wifiEnabled ? Qt.rgba(0, 0, 0, 0.1) : Qt.rgba(1, 1, 1, 0.05)
                         
                         Behavior on color { ColorAnimation { duration: 250; easing.type: Easing.OutQuad } }
                         
@@ -134,7 +103,7 @@ PanelWindow {
                             id: toggleThumb
                             width: toggleMouseArea.pressed ? 20 : 16
                             height: 16
-                            radius: 8
+                            radius: 12
                             y: 2
                             x: netService.wifiEnabled ? (parent.width - width - 3) : 3
                             color: netService.wifiEnabled ? root.walBackground : root.walForeground
@@ -157,7 +126,7 @@ PanelWindow {
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 52
-                    radius: 12
+                    radius: 16
                     color: Qt.rgba(root.walColor5.r, root.walColor5.g, root.walColor5.b, 0.12)
                     border.width: 1
                     border.color: Qt.rgba(root.walColor5.r, root.walColor5.g, root.walColor5.b, 0.3)
@@ -168,7 +137,7 @@ PanelWindow {
                         anchors.margins: 10
                         spacing: 12
                         
-                        // Pulsing Signal Circle
+                        // Signal Circle
                         Rectangle {
                             width: 32
                             height: 32
@@ -184,14 +153,8 @@ PanelWindow {
                                     return "󰤟"
                                 }
                                 color: root.walColor2
-                                font.pixelSize: 14
+                                font.pixelSize: 16
                                 font.family: "JetBrainsMono Nerd Font"
-                            }
-                            
-                            SequentialAnimation on opacity {
-                                loops: Animation.Infinite
-                                NumberAnimation { from: 0.7; to: 1.0; duration: 1000; easing.type: Easing.InOutQuad }
-                                NumberAnimation { from: 1.0; to: 0.7; duration: 1000; easing.type: Easing.InOutQuad }
                             }
                         }
                         
@@ -202,17 +165,17 @@ PanelWindow {
                             Text {
                                 text: netService.wifiCurrentSSID
                                 color: root.walColor2
-                                font.pixelSize: 12
+                                font.pixelSize: 14
                                 font.bold: true
-                                font.family: "JetBrainsMono Nerd Font"
+                                font.family: "Inter", "sans-serif"
                                 elide: Text.ElideRight
                                 Layout.fillWidth: true
                             }
                             Text {
                                 text: "Signal: " + netService.wifiSignal + "% · Active connection"
                                 color: root.walColor8
-                                font.pixelSize: 9
-                                font.family: "JetBrainsMono Nerd Font"
+                                font.pixelSize: 13
+                                font.family: "Inter", "sans-serif"
                             }
                         }
                         
@@ -220,7 +183,7 @@ PanelWindow {
                         Rectangle {
                             width: 26
                             height: 26
-                            radius: 8
+                            radius: 12
                             color: wifiDiscMa.containsMouse ? Qt.rgba(root.walColor1.r, root.walColor1.g, root.walColor1.b, 0.25) : "transparent"
                             
                             Behavior on color { ColorAnimation { duration: 150 } }
@@ -229,7 +192,7 @@ PanelWindow {
                                 anchors.centerIn: parent
                                 text: "󰅖"
                                 color: wifiDiscMa.containsMouse ? root.walColor1 : root.walColor8
-                                font.pixelSize: 12
+                                font.pixelSize: 14
                                 font.family: "JetBrainsMono Nerd Font"
                             }
                             MouseArea {
@@ -276,9 +239,9 @@ PanelWindow {
                             return "Available Networks (" + len + ")"
                         }
                         color: root.walColor8
-                        font.pixelSize: 11
-                        font.bold: true
-                        font.family: "JetBrainsMono Nerd Font"
+                        font.pixelSize: 12
+                        font.weight: Font.Medium
+                        font.family: "Inter", "sans-serif"
                     }
                     
                     Item { Layout.fillWidth: true }
@@ -287,14 +250,14 @@ PanelWindow {
                         width: 24
                         height: 24
                         radius: 6
-                        color: wifiRefreshMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
+                        color: wifiRefreshMa.containsMouse ? Qt.rgba(1, 1, 1, 0.06) : "transparent"
                         
                         Text {
                             id: refreshIcon
                             anchors.centerIn: parent
                             text: "󰑐"
                             color: root.walColor8
-                            font.pixelSize: 12
+                            font.pixelSize: 14
                             font.family: "JetBrainsMono Nerd Font"
                             transformOrigin: Item.Center
                             
@@ -322,10 +285,10 @@ PanelWindow {
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    color: Qt.rgba(0, 0, 0, 0.25)
-                    radius: 12
+                    color: Qt.rgba(0, 0, 0, 0.15)
+                    radius: 16
                     border.width: 1
-                    border.color: Qt.rgba(1, 1, 1, 0.05)
+                    border.color: Qt.rgba(1, 1, 1, 0.06)
                     clip: true
                     
                     ListView {
@@ -379,7 +342,7 @@ PanelWindow {
                                 id: connectingIcon
                                 text: "󰑓" 
                                 color: root.walColor5
-                                font.pixelSize: 32
+                                font.pixelSize: 34
                                 font.family: "JetBrainsMono Nerd Font"
                                 Layout.alignment: Qt.AlignHCenter
                                 transformOrigin: Item.Center 
@@ -395,17 +358,17 @@ PanelWindow {
                             Text {
                                 text: "Connecting..."
                                 color: root.walForeground
-                                font.pixelSize: 12
+                                font.pixelSize: 14
                                 font.bold: true
-                                font.family: "JetBrainsMono Nerd Font"
+                                font.family: "Inter", "sans-serif"
                                 Layout.alignment: Qt.AlignHCenter
                             }
                             
                             Text {
                                 text: "Please wait"
                                 color: root.walColor8
-                                font.pixelSize: 10
-                                font.family: "JetBrainsMono Nerd Font"
+                                font.pixelSize: 13
+                                font.family: "Inter", "sans-serif"
                                 Layout.alignment: Qt.AlignHCenter
                             }
                         }
@@ -417,8 +380,8 @@ PanelWindow {
                         visible: netService.wifiNetworks.length === 0 && !netService.wifiScanning && !netService.wifiConnecting
                         text: netService.wifiEnabled ? "No networks found" : "Wi-Fi is off"
                         color: root.walColor8
-                        font.pixelSize: 11
-                        font.family: "JetBrainsMono Nerd Font"
+                        font.pixelSize: 14
+                        font.family: "Inter", "sans-serif"
                     }
                     
                     Text {
@@ -426,8 +389,8 @@ PanelWindow {
                         visible: netService.wifiScanning && netService.wifiNetworks.length === 0 && !netService.wifiConnecting 
                         text: "Scanning..."
                         color: root.walColor8
-                        font.pixelSize: 11
-                        font.family: "JetBrainsMono Nerd Font"
+                        font.pixelSize: 14
+                        font.family: "Inter", "sans-serif"
                     }
                 }
             }

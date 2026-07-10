@@ -9,8 +9,10 @@ Rectangle {
     id: profileSection
     Layout.fillWidth: true
     Layout.preferredHeight: pfpPickerOpen ? 280 : 100
-    color: Qt.rgba(0, 0, 0, 0.3)
-    radius: 15
+    color: root.theme.cardBackground
+    radius: root.theme.cardRadius
+    border.width: 1
+    border.color: root.theme.cardBorder
     clip: true
     
     property bool pfpPickerOpen: false
@@ -100,7 +102,7 @@ Rectangle {
                         anchors.centerIn: parent
                         text: "󰏫"
                         color: root.walBackground
-                        font.pixelSize: 12
+                        font.pixelSize: 14
                         font.family: "JetBrainsMono Nerd Font"
                     }
                 }
@@ -127,14 +129,14 @@ Rectangle {
                     color: root.walColor5
                     font.pixelSize: 26
                     font.bold: true
-                    font.family: "JetBrainsMono Nerd Font"
+                    font.family: "Inter", "sans-serif"
                 }
                 Text {
                     id: uptimeText
                     text: "up ..."
                     color: root.walForeground
                     font.pixelSize: 12
-                    font.family: "JetBrainsMono Nerd Font"
+                    font.family: "Inter", "sans-serif"
                 }
             }
         }
@@ -144,7 +146,7 @@ Rectangle {
             Layout.fillWidth: true
             Layout.fillHeight: true
             color: Qt.rgba(0, 0, 0, 0.3)
-            radius: 10
+            radius: 14
             visible: profileSection.pfpPickerOpen
             
             ColumnLayout {
@@ -157,7 +159,7 @@ Rectangle {
                     color: root.walColor5
                     font.pixelSize: 12
                     font.bold: true
-                    font.family: "JetBrainsMono Nerd Font"
+                    font.family: "Inter", "sans-serif"
                     Layout.alignment: Qt.AlignHCenter
                 }
                 

@@ -10,14 +10,15 @@ PanelWindow {
     id: dashboard
     visible: true
     exclusionMode: ExclusionMode.Ignore
-    anchors { top: true; bottom: true; right: true }
-    margins { top: 40; bottom: 10; right: root.dashboardVisible ? 6 : -450 }
+    anchors { bottom: true; left: true }
+    margins { bottom: root.dashboardVisible ? 12 : -800; left: 70 }
     implicitWidth: 420
+    implicitHeight: 600
     color: "transparent"
     focusable: true
     WlrLayershell.keyboardFocus: root.dashboardVisible ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
     
-    Behavior on margins.right { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+    Behavior on margins.bottom { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
 
     Item {
         anchors.fill: parent
@@ -36,8 +37,8 @@ PanelWindow {
 
         Rectangle {
             anchors.fill: parent
-            color: Qt.rgba(root.walBackground.r, root.walBackground.g, root.walBackground.b, 0.7)
-            radius: 20
+            color: "transparent"
+            border.width: 0
 
             // Если открыта галерея аватарок - клик мимо неё закроет её
             MouseArea {
@@ -50,7 +51,7 @@ PanelWindow {
             ColumnLayout {
                 anchors.fill: parent
                 anchors.margins: 20
-                spacing: 15
+                spacing: 18
                 z: 100
 
                 // 1. Профиль, Имя, Аватарка

@@ -8,8 +8,10 @@ Rectangle {
     id: statsWidget
     Layout.fillWidth: true
     Layout.preferredHeight: 140
-    color: Qt.rgba(0, 0, 0, 0.3)
-    radius: 15
+    color: root.theme.cardBackground
+    radius: root.theme.cardRadius
+    border.width: 1
+    border.color: root.theme.cardBorder
     
     property int cpuVal: 0
     property int ramVal: 0

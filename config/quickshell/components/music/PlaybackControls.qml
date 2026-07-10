@@ -27,7 +27,7 @@ ColumnLayout {
         color: root.walColor5
         font.pixelSize: 15
         font.bold: true
-        font.family: "JetBrainsMono Nerd Font"
+        font.family: "Inter", "sans-serif"
         Layout.fillWidth: true
         elide: Text.ElideRight
     }
@@ -36,7 +36,7 @@ ColumnLayout {
         text: artist || ""
         color: root.walForeground
         font.pixelSize: 12
-        font.family: "JetBrainsMono Nerd Font"
+        font.family: "Inter", "sans-serif"
         opacity: 0.7
         Layout.fillWidth: true
         elide: Text.ElideRight
@@ -55,19 +55,19 @@ ColumnLayout {
             text: formatTime(position)
             color: root.walColor8
             font.pixelSize: 10
-            font.family: "JetBrainsMono Nerd Font"
+            font.family: "Inter", "sans-serif"
         }
 
         Rectangle {
             Layout.fillWidth: true
-            height: 4
-            radius: 2
-            color: Qt.rgba(0, 0, 0, 0.3)
+            height: 2
+            radius: 1
+            color: Qt.rgba(1, 1, 1, 0.08)
 
             Rectangle {
                 width: length > 0 ? parent.width * (position / length) : 0
                 height: parent.height
-                radius: 2
+                radius: 1
                 color: root.walColor5
                 Behavior on width { NumberAnimation { duration: 200 } }
             }
@@ -88,33 +88,69 @@ ColumnLayout {
             text: formatTime(length)
             color: root.walColor8
             font.pixelSize: 10
-            font.family: "JetBrainsMono Nerd Font"
+            font.family: "Inter", "sans-serif"
         }
     }
 
     // Кнопки управления
     Row {
         Layout.alignment: Qt.AlignHCenter
-        spacing: 12
+        spacing: 16
         opacity: hasTrack ? 1.0 : 0.5
 
+        // Prev Button
         Rectangle {
-            width: 32; height: 32; radius: 8
-            color: prevMa.containsMouse ? Qt.rgba(1,1,1,0.1) : "transparent"
-            Text { anchors.centerIn: parent; text: "󰒮"; color: root.walForeground; font.pixelSize: 16; font.family: "JetBrainsMono Nerd Font" }
+            width: 32; height: 32; radius: 16
+            color: prevMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
+            border.width: prevMa.containsMouse ? 1 : 0
+            border.color: Qt.rgba(1, 1, 1, 0.15)
+            
+            Text {
+                anchors.centerIn: parent
+                text: "󰒮"
+                color: root.walForeground
+                font.pixelSize: 16
+                font.family: "JetBrainsMono Nerd Font"
+                opacity: prevMa.containsMouse ? 1.0 : 0.7
+            }
             MouseArea { id: prevMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: prevClicked() }
         }
 
+        // Play / Pause Button
         Rectangle {
-            width: 40; height: 40; radius: 20; color: root.walColor5
-            Text { anchors.centerIn: parent; text: status === "Playing" ? "󰏤" : "󰐊"; color: root.walBackground; font.pixelSize: 18; font.family: "JetBrainsMono Nerd Font" }
-            MouseArea { anchors.fill: parent; cursorShape: Qt.PointingHandCursor; onClicked: playPauseClicked() }
+            width: 40; height: 40; radius: 20
+            color: playMa.containsMouse ? Qt.rgba(root.walColor5.r, root.walColor5.g, root.walColor5.b, 0.25) : Qt.rgba(root.walColor5.r, root.walColor5.g, root.walColor5.b, 0.12)
+            border.width: 1
+            border.color: playMa.containsMouse ? root.walColor5 : Qt.rgba(root.walColor5.r, root.walColor5.g, root.walColor5.b, 0.4)
+            
+            Behavior on color { ColorAnimation { duration: 150 } }
+            Behavior on border.color { ColorAnimation { duration: 150 } }
+
+            Text {
+                anchors.centerIn: parent
+                text: status === "Playing" ? "󰏤" : "󰐊"
+                color: root.walColor5
+                font.pixelSize: 18
+                font.family: "JetBrainsMono Nerd Font"
+            }
+            MouseArea { id: playMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: playPauseClicked() }
         }
 
+        // Next Button
         Rectangle {
-            width: 32; height: 32; radius: 8
-            color: nextMa.containsMouse ? Qt.rgba(1,1,1,0.1) : "transparent"
-            Text { anchors.centerIn: parent; text: "󰒭"; color: root.walForeground; font.pixelSize: 16; font.family: "JetBrainsMono Nerd Font" }
+            width: 32; height: 32; radius: 16
+            color: nextMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
+            border.width: nextMa.containsMouse ? 1 : 0
+            border.color: Qt.rgba(1, 1, 1, 0.15)
+            
+            Text {
+                anchors.centerIn: parent
+                text: "󰒭"
+                color: root.walForeground
+                font.pixelSize: 16
+                font.family: "JetBrainsMono Nerd Font"
+                opacity: nextMa.containsMouse ? 1.0 : 0.7
+            }
             MouseArea { id: nextMa; anchors.fill: parent; hoverEnabled: true; cursorShape: Qt.PointingHandCursor; onClicked: nextClicked() }
         }
     }

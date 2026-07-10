@@ -4,13 +4,25 @@ import "../core"
 
 Notch {
     id: sysNotch
-    property bool wifiConnected: false
-    property string wifiSSID: ""
-    property int wifiStrength: 0
-    property bool btConnected: false
+    property bool wifiConnected: root.wifiCurrentSSID !== ""
+    property string wifiSSID: root.wifiCurrentSSID
+    property int wifiStrength: root.wifiSignal
+    property bool btConnected: {
+        if (!root.btEnabled) return false
+        var devices = root.btPairedDevices
+        for (var i = 0; i < devices.length; i++) {
+            if (devices[i].connected) return true
+        }
+        return false
+    }
 
-    width: networkRow.width + 24
+    width: 36
+    height: 52
     hovered: networkMA.containsMouse
+    
+    scale: networkMA.containsMouse ? 1.05 : 1.0
+    Behavior on scale { NumberAnimation { duration: 180; easing.type: Easing.OutQuad } }
+
     tooltip: {
         var t = ""
         if (wifiConnected) t += wifiSSID + " (" + wifiStrength + "%)"
@@ -19,39 +31,16 @@ Notch {
         return t
     }
 
-    Timer {
-        interval: 5000; running: true; repeat: true; triggeredOnStart: true
-        onTriggered: { if (!networkProc.running) networkProc.running = true }
-    }
-
-    Process {
-        id: networkProc
-        command: ["bash", "-c", "wifi=$(nmcli -t -f active,ssid,signal dev wifi 2>/dev/null | grep '^yes' | head -1); if [ -n \"$wifi\" ]; then ssid=$(echo \"$wifi\" | cut -d: -f2); sig=$(echo \"$wifi\" | cut -d: -f3); echo \"1|$ssid|$sig\"; else echo '0||0'; fi; bt='0'; devices=$(echo -e 'devices\\nquit' | bluetoothctl 2>/dev/null | grep '^Device' | awk '{print $2}'); for mac in $devices; do if echo -e \"info $mac\\nquit\" | bluetoothctl 2>/dev/null | grep -q 'Connected: yes'; then bt='1'; break; fi; done; echo \"bt:$bt\""]
-        stdout: SplitParser {
-            onRead: data => {
-                var line = data.trim()
-                if (line.startsWith("bt:")) {
-                    sysNotch.btConnected = line.endsWith("1")
-                } else {
-                    var parts = line.split("|")
-                    sysNotch.wifiConnected = parts[0] === "1"
-                    sysNotch.wifiSSID = parts.length > 1 ? parts[1] : ""
-                    sysNotch.wifiStrength = parts.length > 2 ? parseInt(parts[2]) : 0
-                }
-            }
-        }
-    }
-
     Item {
         anchors.fill: parent
 
-        Row {
-            id: networkRow
+        Column {
+            id: networkColumn
             anchors.centerIn: parent
-            spacing: 8
+            spacing: 6
 
             Text {
-                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
                 text: {
                     if (!sysNotch.wifiConnected) return "󰤭"
                     if (sysNotch.wifiStrength > 75) return "󰤨"
@@ -60,17 +49,17 @@ Notch {
                     return "󰤟"
                 }
                 color: sysNotch.wifiConnected ? root.walColor2 : root.walColor8
-                font.pixelSize: 14
-                font.family: "JetBrainsMono Nerd Font"
+                font.pixelSize: 15
+                font.family: root.theme.iconFont
                 Behavior on color { ColorAnimation { duration: 300; easing.type: Easing.OutCubic } }
             }
 
             Text {
-                anchors.verticalCenter: parent.verticalCenter
+                anchors.horizontalCenter: parent.horizontalCenter
                 text: sysNotch.btConnected ? "󰂱" : "󰂲"
                 color: sysNotch.btConnected ? root.walColor5 : root.walColor8
-                font.pixelSize: 13
-                font.family: "JetBrainsMono Nerd Font"
+                font.pixelSize: 14
+                font.family: root.theme.iconFont
                 Behavior on color { ColorAnimation { duration: 300; easing.type: Easing.OutCubic } }
             }
         }

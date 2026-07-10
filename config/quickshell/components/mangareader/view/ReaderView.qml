@@ -25,7 +25,7 @@
 //             anchors.margins: 20
 //             width: 100; height: 40
 //             color: "#313244"
-//             radius: 8
+//             radius: 12
 
 //             Text {
 //                 anchors.centerIn: parent

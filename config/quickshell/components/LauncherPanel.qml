@@ -10,75 +10,40 @@ PanelWindow {
     id: launcherPanel
     visible: true
     exclusionMode: ExclusionMode.Ignore
-    anchors { top: true; bottom: true; left: true }
-    margins { top: 40; bottom: 10; left: root.launcherVisible ? 6 : -450 }
+    anchors { bottom: true; left: true }
+    margins { bottom: root.launcherVisible ? 12 : -800; left: 70 }
     implicitWidth: 420
+    implicitHeight: 600
     color: "transparent"
     focusable: true
     WlrLayershell.keyboardFocus: root.launcherVisible ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
-    Behavior on margins.left { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+    Behavior on margins.bottom { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
 
     Rectangle {
         anchors.fill: parent
         color:{
             let c = wallService.walBackground;
-            if (!c || typeof c.r === 'undefined') return Qt.rgba(0.1, 0.1, 0.1, 0.7); // Темный дефолт
-            return Qt.rgba(c.r, c.g, c.b, 0.7);
+            if (!c || typeof c.r === 'undefined') return Qt.rgba(0.1, 0.1, 0.1, root.theme.panelOpacity);
+            return Qt.rgba(c.r, c.g, c.b, root.theme.panelOpacity);
         }
-        radius: 20
+        radius: root.theme.panelRadius
+        border.width: 1
+        border.color: Qt.rgba(1, 1, 1, root.theme.borderOpacity)
 
         ColumnLayout {
             anchors.fill: parent
             anchors.margins: 20
             spacing: 15
 
-            // --- 1. Кнопки вкладок ---
-            TabButtons {
-                onFocusApps: if (appsLoader.item) appsLoader.item.focusSearch()
-                onFocusWalls: if (wallsLoader.item) wallsLoader.item.focusSearch()
-            }
-
-            // --- 2. Контент ---
-            Item {
+            AppsTab {
+                id: appsTab
                 Layout.fillWidth: true
                 Layout.fillHeight: true
-
-                Loader {
-                    id: appsLoader
-                    anchors.fill: parent
-                    active: root.activeTab === 0
-                    asynchronous: true
-
-                    onLoaded: if (root.activeTab === 0 && root.launcherVisible) item.focusSearch()
-                    
-                    sourceComponent: Component {
-                        AppsTab {
-                            onSwitchToWalls: {
-                                root.activeTab = 1
-                                if (!wallService.wallsLoaded) wallService.load()
-                            }
-                            onCloseLauncher: root.launcherVisible = false
-                        }
-                    }
+                onSwitchToWalls: {
+                    root.launcherVisible = false
+                    root.toggleWallpaper()
                 }
-
-                Loader {
-                    id: wallsLoader
-                    anchors.fill: parent
-                    active: root.activeTab === 1
-                    asynchronous: true
-                    
-                    onLoaded: if (root.activeTab === 0 && root.launcherVisible) item.focusSearch()
-
-                    sourceComponent: Component {
-                        WallsTab {
-                            onSwitchToApps: {
-                                root.activeTab = 0
-                            }
-                            onCloseLauncher: root.launcherVisible = false
-                        }
-                    }
-                }
+                onCloseLauncher: root.launcherVisible = false
             }
         }
     }
@@ -89,24 +54,12 @@ PanelWindow {
         function onLauncherVisibleChanged() {
             if (root.launcherVisible) {
                 appService.load()
-                
                 root.selectedIndex = 0
-                root.wallSelectedIndex = 0
-                
                 focusDelayTimer.start()
             } else {
-                if (appsLoader.item) {
-                    appsLoader.item.clearSearch()
-                    appsLoader.item.removeFocus()
-                }
-                if (wallsLoader.item) {
-                    wallsLoader.item.clearSearch()
-                    wallsLoader.item.removeFocus()
-                }
+                appsTab.clearSearch()
+                appsTab.removeFocus()
             }
-        }
-        function onWallSelectedIndexChanged() {
-            if (root.activeTab === 1 && wallsLoader.item) wallsLoader.item.positionView(root.wallSelectedIndex)
         }
     }
 
@@ -125,13 +78,7 @@ PanelWindow {
         interval: 100
         repeat: false
         onTriggered: {
-            if (root.activeTab === 0 && appsLoader.item) {
-                appsLoader.item.focusSearch()
-            } else if (root.activeTab === 1) {
-                // ИСПРАВЛЕНО: вызываем сервис вместо root
-                if (!wallService.wallsLoaded) wallService.load() 
-                if (wallsLoader.item) wallsLoader.item.focusSearch()
-            }
+            appsTab.focusSearch()
             launcherPanel.WlrLayershell.keyboardFocus = WlrKeyboardFocus.OnDemand
         }
     }

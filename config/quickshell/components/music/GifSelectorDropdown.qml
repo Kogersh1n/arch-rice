@@ -24,9 +24,9 @@ Rectangle {
 
     width: 380
     height: 260
-    radius: 14
-    color: Qt.rgba(root.walBackground.r, root.walBackground.g, root.walBackground.b, 0.85)
-    border.color: Qt.rgba(1, 1, 1, 0.1)
+    radius: root.theme.cardRadius
+    color: root.theme.cardBackground
+    border.color: root.theme.cardBorder
     border.width: 1
     visible: isOpen
     clip: true
@@ -36,7 +36,7 @@ Rectangle {
         transparentBorder: true
         horizontalOffset: 0
         verticalOffset: 4
-        radius: 16
+        radius: 28
         samples: 17
         color: Qt.rgba(0, 0, 0, 0.35) 
     }
@@ -55,7 +55,7 @@ Rectangle {
                 color: root.walColor5
                 font.pixelSize: 12
                 font.bold: true
-                font.family: "JetBrainsMono Nerd Font"
+                font.family: "Inter", "sans-serif"
                 Layout.fillWidth: true 
             }
             
@@ -64,7 +64,7 @@ Rectangle {
                 text: (previewIndex + 1) + " / " + gifFiles.length
                 color: root.walColor8
                 font.pixelSize: 10
-                font.family: "JetBrainsMono Nerd Font"
+                font.family: "Inter", "sans-serif"
                 opacity: 0.6 
             }
             
@@ -73,7 +73,7 @@ Rectangle {
             Rectangle {
                 width: 20
                 height: 20
-                radius: 10
+                radius: 14
                 color: dropCloseMa.containsMouse ? Qt.rgba(root.walColor1.r, root.walColor1.g, root.walColor1.b, 0.5) : Qt.rgba(1, 1, 1, 0.08)
                 Behavior on color { ColorAnimation { duration: 150 } }
                 
@@ -81,7 +81,7 @@ Rectangle {
                     anchors.centerIn: parent
                     text: "󰅖"
                     color: dropCloseMa.containsMouse ? root.walColor1 : root.walForeground
-                    font.pixelSize: 10
+                    font.pixelSize: 12
                     font.family: "JetBrainsMono Nerd Font"
                     Behavior on color { ColorAnimation { duration: 150 } } 
                 }
@@ -108,7 +108,7 @@ Rectangle {
             
             Rectangle {
                 anchors.fill: parent
-                radius: 12
+                radius: 18
                 color: Qt.rgba(0, 0, 0, 0.2)
                 border.color: Qt.rgba(1, 1, 1, 0.08)
                 border.width: 1
@@ -141,7 +141,7 @@ Rectangle {
                     text: "No gifs found"
                     color: root.walColor8
                     font.pixelSize: 11
-                    font.family: "JetBrainsMono Nerd Font"
+                    font.family: "Inter", "sans-serif"
                     opacity: 0.5 
                 }
                 
@@ -151,7 +151,7 @@ Rectangle {
                     text: "Loading..."
                     color: root.walColor8
                     font.pixelSize: 11
-                    font.family: "JetBrainsMono Nerd Font"
+                    font.family: "Inter", "sans-serif"
                     opacity: 0.5 
                 }
                 
@@ -162,7 +162,7 @@ Rectangle {
                     visible: gifFiles.length > 0 && isLoaded
                     width: nameLabel.implicitWidth + 16
                     height: 20
-                    radius: 10
+                    radius: 14
                     color: Qt.rgba(0, 0, 0, 0.6)
                     
                     Text { 
@@ -171,7 +171,7 @@ Rectangle {
                         text: (gifFiles.length > 0 && previewIndex < gifFiles.length) ? gifFileName(gifFiles[previewIndex]) : ""
                         color: root.walForeground
                         font.pixelSize: 9
-                        font.family: "JetBrainsMono Nerd Font"
+                        font.family: "Inter", "sans-serif"
                         opacity: 0.9 
                     }
                 }
@@ -186,7 +186,7 @@ Rectangle {
             Rectangle {
                 Layout.preferredWidth: 36
                 Layout.preferredHeight: 32
-                radius: 8
+                radius: 12
                 color: prevGifMa.containsMouse ? Qt.rgba(root.walColor5.r, root.walColor5.g, root.walColor5.b, 0.25) : Qt.rgba(1, 1, 1, 0.08)
                 border.color: prevGifMa.containsMouse ? Qt.rgba(root.walColor5.r, root.walColor5.g, root.walColor5.b, 0.4) : Qt.rgba(1, 1, 1, 0.05)
                 border.width: 1
@@ -197,7 +197,7 @@ Rectangle {
                     text: "󰅁"
                     color: prevGifMa.containsMouse ? root.walColor5 : root.walForeground
                     font.pixelSize: 16
-                    font.family: "JetBrainsMono Nerd Font" 
+                    font.family: "Inter", "sans-serif" 
                 }
                 
                 MouseArea { 
@@ -213,7 +213,7 @@ Rectangle {
             Rectangle {
                 Layout.preferredWidth: 36
                 Layout.preferredHeight: 32
-                radius: 8
+                radius: 12
                 color: nextGifMa.containsMouse ? Qt.rgba(root.walColor5.r, root.walColor5.g, root.walColor5.b, 0.25) : Qt.rgba(1, 1, 1, 0.08)
                 border.color: nextGifMa.containsMouse ? Qt.rgba(root.walColor5.r, root.walColor5.g, root.walColor5.b, 0.4) : Qt.rgba(1, 1, 1, 0.05)
                 border.width: 1
@@ -224,7 +224,7 @@ Rectangle {
                     text: "󰅂"
                     color: nextGifMa.containsMouse ? root.walColor5 : root.walForeground
                     font.pixelSize: 16
-                    font.family: "JetBrainsMono Nerd Font" 
+                    font.family: "Inter", "sans-serif" 
                 }
                 
                 MouseArea { 
@@ -242,7 +242,7 @@ Rectangle {
             Rectangle {
                 Layout.preferredWidth: 85
                 Layout.preferredHeight: 32
-                radius: 8
+                radius: 12
                 color: {
                     if (isApplying) return Qt.rgba(1, 1, 1, 0.03)
                     if (previewIndex === currentIndex) return Qt.rgba(1, 1, 1, 0.05)
@@ -265,7 +265,7 @@ Rectangle {
                         if (previewIndex === currentIndex) return Qt.rgba(root.walForeground.r, root.walForeground.g, root.walForeground.b, 0.3)
                         return applyGifMa.pressed ? root.walBackground : root.walColor5
                     }
-                    font.pixelSize: 11
+                    font.pixelSize: 13
                     font.bold: true
                     font.family: "JetBrainsMono Nerd Font"
                 }
@@ -296,7 +296,7 @@ Rectangle {
                     text: "←→ nav"
                     color: root.walColor8
                     font.pixelSize: 9
-                    font.family: "JetBrainsMono Nerd Font"
+                    font.family: "Inter", "sans-serif"
                     opacity: 0.6 
                 }
                 Item { Layout.fillWidth: true }
@@ -304,7 +304,7 @@ Rectangle {
                     text: "↵ apply"
                     color: root.walColor8
                     font.pixelSize: 9
-                    font.family: "JetBrainsMono Nerd Font"
+                    font.family: "Inter", "sans-serif"
                     opacity: 0.6 
                 }
                 Item { Layout.fillWidth: true }
@@ -312,7 +312,7 @@ Rectangle {
                     text: "esc close"
                     color: root.walColor8
                     font.pixelSize: 9
-                    font.family: "JetBrainsMono Nerd Font"
+                    font.family: "Inter", "sans-serif"
                     opacity: 0.6 
                 }
             }

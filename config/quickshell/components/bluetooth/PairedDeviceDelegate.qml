@@ -18,7 +18,7 @@ Rectangle {
 
     width: parent ? parent.width : 0
     height: 48
-    radius: 10
+    radius: 14
     color: btPairedMa.containsMouse ? Qt.rgba(walColor5.r, walColor5.g, walColor5.b, 0.12) : "transparent"
     
     Behavior on color { ColorAnimation { duration: 150; easing.type: Easing.OutQuad } }
@@ -48,7 +48,7 @@ Rectangle {
             id: statusIcon
             text: devData.connected ? "󰂱" : "󰂲"
             color: devData.connected ? walColor2 : walColor8
-            font.pixelSize: 17
+            font.pixelSize: 19
             font.family: "JetBrainsMono Nerd Font"
             
             SequentialAnimation {
@@ -66,9 +66,9 @@ Rectangle {
             Text {
                 text: devData.name
                 color: devData.connected ? walColor2 : walForeground
-                font.pixelSize: 12
+                font.pixelSize: 13
                 font.bold: devData.connected || btPairedMa.containsMouse
-                font.family: "JetBrainsMono Nerd Font"
+                font.family: "Inter", "sans-serif"
                 elide: Text.ElideRight
                 Layout.fillWidth: true
                 
@@ -81,8 +81,8 @@ Rectangle {
                     return "Paired"
                 }
                 color: walColor8
-                font.pixelSize: 9
-                font.family: "JetBrainsMono Nerd Font"
+                font.pixelSize: 11
+                font.family: "Inter", "sans-serif"
             }
         }
         
@@ -90,7 +90,7 @@ Rectangle {
         Rectangle {
             width: 28
             height: 28
-            radius: 8
+            radius: 12
             color: {
                 if (!btConnBtnMa.containsMouse) return "transparent"
                 return devData.connected ? Qt.rgba(walColor1.r, walColor1.g, walColor1.b, 0.2) : Qt.rgba(walColor2.r, walColor2.g, walColor2.b, 0.2)
@@ -101,7 +101,7 @@ Rectangle {
                 anchors.centerIn: parent
                 text: devData.connected ? "󰅖" : "󰐕"
                 color: devData.connected ? walColor1 : walColor5
-                font.pixelSize: 12
+                font.pixelSize: 14
                 font.family: "JetBrainsMono Nerd Font"
             }
             MouseArea {
@@ -117,7 +117,7 @@ Rectangle {
         Rectangle {
             width: 28
             height: 28
-            radius: 8
+            radius: 12
             color: btForgetMa.containsMouse ? Qt.rgba(walColor1.r, walColor1.g, walColor1.b, 0.2) : "transparent"
             Behavior on color { ColorAnimation { duration: 150 } }
 
@@ -125,8 +125,8 @@ Rectangle {
                 anchors.centerIn: parent
                 text: "󰆴"
                 color: btForgetMa.containsMouse ? walColor1 : walColor8
-                font.pixelSize: 12
-                font.family: "JetBrainsMono Nerd Font"
+                font.pixelSize: 13
+                font.family: "Inter", "sans-serif"
                 
                 Behavior on color { ColorAnimation { duration: 150 } }
             }

@@ -5,8 +5,10 @@ import "../core"
 Rectangle {
     Layout.fillWidth: true
     Layout.preferredHeight: 50
-    color: Qt.rgba(0, 0, 0, 0.3)
-    radius: 15
+    color: root.theme.cardBackground
+    radius: root.theme.cardRadius
+    border.width: 1
+    border.color: root.theme.cardBorder
     
     Row {
         anchors.centerIn: parent

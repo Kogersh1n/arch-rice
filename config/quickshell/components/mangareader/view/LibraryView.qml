@@ -42,12 +42,12 @@
 //             width: 105
 //             height: 160
 //             color: model && model.coverColor ? model.coverColor : "#1e1e2e" // Твой любимый Catppuccin Mocha
-//             radius: 10
+//             radius: 14
 
 //             Rectangle {
 //                 id: cardRect
 //                 anchors.fill: parent
-//                 radius: 8
+//                 radius: 12
 //                 color: "#313244"
 //                 clip: true
 //             }

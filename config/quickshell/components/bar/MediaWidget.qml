@@ -1,7 +1,6 @@
 import QtQuick 2.15
 import Quickshell
 import Quickshell.Io
-import Qt5Compat.GraphicalEffects
 import "../core"
 
 Notch {
@@ -10,44 +9,22 @@ Notch {
     property string mediaClass: "stopped"
     property real mediaPosition: 0
     property real mediaLength: 0
-    property var cavaValues: [0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1]
 
-    width: mediaText !== "" ? mediaContent.width + 28 : 0
+    width: mediaText !== "" ? 36 : 0
+    height: mediaText !== "" ? 36 : 0
     visible: mediaText !== ""
     hovered: mediaMA.containsMouse
     tooltip: mediaText
 
+    scale: mediaMA.containsMouse ? 1.05 : 1.0
+    Behavior on scale { NumberAnimation { duration: 180; easing.type: Easing.OutQuad } }
+
     Behavior on width { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
+    Behavior on height { NumberAnimation { duration: 350; easing.type: Easing.OutCubic } }
 
     Timer {
         interval: 1500; running: true; repeat: true; triggeredOnStart: true
         onTriggered: { if (!mediaProc.running) mediaProc.running = true }
-    }
-
-    Process {
-        id: cavaProc
-        running: mediaNotch.mediaClass === "playing"
-        command: ["cava", "-p", Quickshell.env("HOME") + "/.config/cava/config_raw"]
-        stdout: SplitParser {
-            onRead: data => {
-                var parts = data.trim().split(";")
-                var vals = []
-                for (var i = 0; i < 12 && i < parts.length; i++) {
-                    vals.push(parseInt(parts[i]) / 255)
-                }
-                while (vals.length < 12) vals.push(0.1)
-                mediaNotch.cavaValues = vals
-            }
-        }
-    }
-
-    Timer {
-        interval: 80; running: mediaNotch.mediaClass !== "playing"; repeat: true
-        onTriggered: {
-            var newVals = []
-            for (var i = 0; i < 12; i++) newVals.push(mediaNotch.cavaValues[i] * 0.85)
-            mediaNotch.cavaValues = newVals
-        }
     }
 
     Process {
@@ -78,79 +55,34 @@ Notch {
     Item {
         anchors.fill: parent
 
-        Column {
-            id: mediaContent
+        // Rotating Vinyl / Music Disc
+        Rectangle {
+            id: disc
             anchors.centerIn: parent
-            spacing: 2
+            width: 26
+            height: 26
+            radius: 13
+            color: mediaNotch.mediaClass === "playing" ? Qt.rgba(root.walColor5.r, root.walColor5.g, root.walColor5.b, 0.15) : "transparent"
+            border.width: 1
+            border.color: mediaNotch.mediaClass === "playing" ? root.walColor5 : root.walColor8
+            antialiasing: true
 
-            Row {
-                anchors.horizontalCenter: parent.horizontalCenter
-                spacing: 10
+            Behavior on color { ColorAnimation { duration: 250 } }
+            Behavior on border.color { ColorAnimation { duration: 250 } }
 
-                Item {
-                    width: cavaRow.width
-                    height: 14
-                    anchors.verticalCenter: parent.verticalCenter
-
-                    Row {
-                        id: cavaRow
-                        anchors.centerIn: parent
-                        spacing: 2
-
-                        Repeater {
-                            model: 12
-                            Rectangle {
-                                width: 2
-                                height: Math.max(3, mediaNotch.cavaValues[index] * 14)
-                                radius: 1.5
-                                anchors.verticalCenter: parent.verticalCenter
-                                color: root.walColor5
-                                antialiasing: true
-                                Behavior on height { NumberAnimation { duration: 60; easing.type: Easing.OutQuad } }
-                            }
-                        }
-                    }
-                }
-
-                Text {
-                    id: mediaLabel
-                    anchors.verticalCenter: parent.verticalCenter
-                    text: mediaNotch.mediaText
-                    color: root.walColor2
-                    font.pixelSize: 10
-                    font.bold: true
-                    font.family: "JetBrainsMono Nerd Font"
-                    opacity: mediaNotch.mediaClass === "playing" ? 1.0 : 0.7
-
-                    layer.enabled: true
-                    layer.effect: DropShadow {
-                        horizontalOffset: 0; verticalOffset: 1; radius: 4; samples: 9; spread: 0.2
-                        color: Qt.rgba(0, 0, 0, 0.8)
-                        transparentBorder: true
-                    }
-                    Behavior on opacity { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
-                }
-            }
-
-            Rectangle {
-                width: mediaContent.width
-                height: 3
-                radius: 1.5
-                color: Qt.rgba(0, 0, 0, 0.4)
-                visible: mediaNotch.mediaLength > 0
-                antialiasing: true
-
-                Rectangle {
-                    width: mediaNotch.mediaLength > 0 ? parent.width * (mediaNotch.mediaPosition / mediaNotch.mediaLength) : 0
-                    height: parent.height
-                    radius: 1.5
-                    color: root.walColor2
-
-                    layer.enabled: true
-                    layer.effect: Glow {
-                        radius: 3; samples: 7; color: root.walColor2; transparentBorder: true; antialiasing: true
-                    }
-                    Behavior on width { NumberAnimation { duration: 200; easing.type: Easing.Linear } }
+            Text {
+                anchors.centerIn: parent
+                text: "󰎆"
+                color: mediaNotch.mediaClass === "playing" ? root.walColor5 : root.walColor8
+                font.pixelSize: 13
+                font.family: root.theme.iconFont
+                
+                // Slow rotation animation when music is playing!
+                RotationAnimation on rotation {
+                    from: 0; to: 360
+                    duration: 8000
+                    loops: Animation.Infinite
+                    running: mediaNotch.mediaClass === "playing"
                 }
             }
         }

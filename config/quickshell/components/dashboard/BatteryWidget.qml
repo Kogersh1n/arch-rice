@@ -6,8 +6,10 @@ Rectangle {
     id: batWidget
     Layout.fillWidth: true
     Layout.preferredHeight: 70
-    color: Qt.rgba(0, 0, 0, 0.3)
-    radius: 15
+    color: root.theme.cardBackground
+    radius: root.theme.cardRadius
+    border.width: 1
+    border.color: root.theme.cardBorder
     
     property int batVal: 100
     property string batState: "Unknown"
@@ -22,7 +24,7 @@ Rectangle {
             text: "󰁹"
             color: root.walColor2
             font.pixelSize: 32
-            font.family: "JetBrainsMono Nerd Font"
+            font.family: root.theme.iconFont
         }
         
         ColumnLayout {
@@ -32,14 +34,14 @@ Rectangle {
                 text: "Battery " + batWidget.batVal + "%"
                 color: root.walForeground
                 font.pixelSize: 18
-                font.family: "JetBrainsMono Nerd Font"
+                font.family: root.theme.textFont
             }
             Text {
                 id: batStatus
                 text: "Checking..."
                 color: root.walColor8
                 font.pixelSize: 12
-                font.family: "JetBrainsMono Nerd Font"
+                font.family: root.theme.textFont
             }
         }
     }
@@ -71,19 +73,21 @@ Rectangle {
         interval: 5000; running: true; repeat: true; triggeredOnStart: true
         onTriggered: {
             if (!batProc.running) batProc.running = true
-            if (!batStatusProc.running) batStatusProc.running = true
         }
     }
 
     Process {
         id: batProc
-        command: ["bash", "-c", "cat /sys/class/power_supply/BAT*/capacity 2>/dev/null | head -n 1 || echo 100"]
-        stdout: SplitParser { onRead: data => { batWidget.batVal = parseInt(data) || 100; batWidget.updateBatteryUI() } }
-    }
-
-    Process {
-        id: batStatusProc
-        command: ["bash", "-c", "cat /sys/class/power_supply/BAT*/status 2>/dev/null | head -n 1 || echo Unknown"]
-        stdout: SplitParser { onRead: data => { batWidget.batState = data.trim(); batWidget.updateBatteryUI() } }
+        command: ["bash", "-c", "cat /sys/class/power_supply/BAT*/capacity /sys/class/power_supply/BAT*/status 2>/dev/null | tr '\\n' '|' || echo '100|Unknown'"]
+        stdout: SplitParser {
+            onRead: data => {
+                var parts = data.trim().split("|")
+                if (parts.length >= 2) {
+                    batWidget.batVal = parseInt(parts[0]) || 100
+                    batWidget.batState = parts[1].trim()
+                    batWidget.updateBatteryUI()
+                }
+            }
+        }
     }
 }

@@ -4,12 +4,13 @@ import "../core"
 
 Notch {
     id: wsRoot
-    width: wsContainer.width + 20
+    width: 36
+    height: wsContainer.height + 20
     
     property int activeWsId: 1
     property int targetWsId: 1
 
-    Behavior on width { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+    Behavior on height { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
 
     Connections {
         target: Hyprland
@@ -50,32 +51,32 @@ Notch {
         Item {
             id: wsContainer
             anchors.centerIn: parent
-            width: wsRow.width
-            height: 18
+            width: 18
+            height: wsColumn.height
 
             Rectangle {
                 id: wsHighlight
-                height: 18
+                width: 18
                 radius: 9
-                property real targetX: 0
-                property real targetWidth: 26
+                property real targetY: 0
+                property real targetHeight: 26
                 property real highlightOpacity: 1.0
                 property real highlightScale: 1.0
 
-                x: targetX
-                width: targetWidth
+                y: targetY
+                height: targetHeight
                 opacity: highlightOpacity
                 scale: highlightScale
                 transformOrigin: Item.Center
                 color: root.walColor13
                 antialiasing: true
 
-                Behavior on x { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
-                Behavior on width { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
+                Behavior on y { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+                Behavior on height { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
             }
 
-            Row {
-                id: wsRow
+            Column {
+                id: wsColumn
                 anchors.centerIn: parent
                 spacing: 4
 
@@ -90,18 +91,18 @@ Notch {
                         property bool isHovered: wsMA.containsMouse
 
                         visible: modelData.id > 0
-                        width: Math.max(wsText.implicitWidth + 14, 26)
-                        height: 18
+                        width: 18
+                        height: Math.max(wsText.implicitWidth + 14, 26)
 
                         onIsActiveChanged: updateHighlight()
-                        onXChanged: if (isActive) updateHighlight()
-                        onWidthChanged: if (isActive) updateHighlight()
+                        onYChanged: if (isActive) updateHighlight()
+                        onHeightChanged: if (isActive) updateHighlight()
                         Component.onCompleted: if (isActive) updateHighlight()
 
                         function updateHighlight() {
                             if (isActive) {
-                                wsHighlight.targetX = x
-                                wsHighlight.targetWidth = width
+                                wsHighlight.targetY = y
+                                wsHighlight.targetHeight = height
                             }
                         }
 
@@ -120,7 +121,7 @@ Notch {
                             color: isActive ? root.walBackground : (isHovered ? root.walForeground : Qt.rgba(root.walForeground.r, root.walForeground.g, root.walForeground.b, 0.5))
                             font.pixelSize: 10
                             font.bold: true
-                            font.family: "JetBrainsMono Nerd Font"
+                            font.family: "Inter", "sans-serif"
                             Behavior on color { ColorAnimation { duration: 200; easing.type: Easing.OutCubic } }
                         }
 

@@ -10,14 +10,14 @@ PanelWindow {
     id: musicPanel
     visible: true
     exclusionMode: ExclusionMode.Ignore
-    anchors { top: true; left: true; right: true }
-    margins { top: root.musicVisible ? 50 : -350; left: 0; right: 0 }
+    anchors { bottom: true; left: true }
+    margins { bottom: root.musicVisible ? 120 : -600; left: 70 }
     implicitWidth: 400
-    implicitHeight: musicPanel.gifSelectorOpen ? 460 : 188
+    implicitHeight: !musicPanel.hasTrack ? 100 : (musicPanel.gifSelectorOpen ? 460 : 188)
     color: "transparent"
     focusable: true
     WlrLayershell.keyboardFocus: root.musicVisible ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
-    Behavior on margins.top { NumberAnimation { duration: 300; easing.type: Easing.OutCubic } }
+    Behavior on margins.bottom { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
 
     property string configPath: root.configPath
     property string gifPath: configPath + "/assets/gifs"
@@ -137,14 +137,14 @@ PanelWindow {
 
             Rectangle {
                 width: 400
-                height: 180
-                color: {
-                    let c = root.walBackground;
-                    if (!c || typeof c.r === 'undefined') return Qt.rgba(0.1, 0.1, 0.1, 0.7);
-                    return Qt.rgba(c.r, c.g, c.b, 0.7);
-                }
-                radius: 15
+                height: !musicPanel.hasTrack ? 90 : 180
+                color: root.theme.cardBackground
+                radius: root.theme.cardRadius
+                border.width: 1
+                border.color: root.theme.cardBorder
                 clip: true
+
+                Behavior on height { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
 
                 RowLayout {
                     anchors.fill: parent
@@ -177,6 +177,7 @@ PanelWindow {
                         gifSource: musicPanel.currentGifSource
                         status: musicPanel.playerStatus
                         isActive: !musicPanel.isApplyingGif 
+                        visible: musicPanel.hasTrack
                         onToggleSelector: {
                             if (!musicPanel.gifSelectorOpen) { 
                                 musicPanel.loadGifs()

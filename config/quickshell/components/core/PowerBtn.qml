@@ -7,16 +7,19 @@ Rectangle {
     property color iconColor
     property string cmd
     
-    width: 40; height: 40; radius: 10
+    width: 40; height: 40; radius: 12
     color: powerMa.containsMouse ? Qt.rgba(1,1,1,0.1) : "transparent"
     Behavior on color { ColorAnimation { duration: 150 } }
+    
+    scale: powerMa.containsMouse ? 1.12 : 1.0
+    Behavior on scale { NumberAnimation { duration: 150; easing.type: Easing.OutBack } }
     
     Text {
         anchors.centerIn: parent
         text: btnRoot.icon
         color: btnRoot.iconColor
-        font.pixelSize: 18
-        font.family: "JetBrainsMono Nerd Font"
+        font.pixelSize: 20
+        font.family: root.theme.iconFont
     }
     MouseArea {
         id: powerMa

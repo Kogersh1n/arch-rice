@@ -23,11 +23,11 @@ ColumnLayout {
         border.color: root.walColor13
         RowLayout {
             anchors.fill: parent; anchors.leftMargin: 14; anchors.rightMargin: 14; spacing: 10
-            Text { text: ""; color: root.walColor8; font.pixelSize: 14; font.family: "JetBrainsMono Nerd Font" }
+            Text { text: ""; color: root.walColor8; font.pixelSize: 14; font.family: "Inter", "sans-serif" }
             TextInput {
                 id: wallSearchInput
                 Layout.fillWidth: true; Layout.fillHeight: true
-                color: root.walForeground; font.pixelSize: 14; font.family: "JetBrainsMono Nerd Font"
+                color: root.walForeground; font.pixelSize: 14; font.family: "Inter", "sans-serif"
                 verticalAlignment: TextInput.AlignVCenter; selectByMouse: true; clip: true
                 
                 // ВАЖНО: Приоритет клавиш
@@ -93,7 +93,7 @@ ColumnLayout {
                 }
             }
             Text {
-                visible: wallSearchInput.text.length > 0; text: "󰅖"; color: root.walColor8; font.pixelSize: 12; font.family: "JetBrainsMono Nerd Font"
+                visible: wallSearchInput.text.length > 0; text: "󰅖"; color: root.walColor8; font.pixelSize: 14; font.family: "JetBrainsMono Nerd Font"
                 opacity: clearWallMouse.containsMouse ? 1.0 : 0.7
                 Behavior on opacity { NumberAnimation { duration: 100 } }
                 MouseArea {
@@ -138,7 +138,7 @@ ColumnLayout {
             delegate: Item {
                 width: wallGridView.cellWidth; height: wallGridView.cellHeight
                 Rectangle {
-                    anchors.fill: parent; anchors.margins: 4; radius: 10
+                    anchors.fill: parent; anchors.margins: 4; radius: 14
                     color: {
                         let c = root.walColor13;
                         if (!c || typeof c.r === 'undefined') {
@@ -177,8 +177,8 @@ ColumnLayout {
                             Rectangle {
                                 visible: modelData.path === wallService.currentWallpaper
                                 anchors.top: parent.top; anchors.right: parent.right; anchors.margins: 3
-                                width: 16; height: 16; radius: 8; color: root.walColor2
-                                Text { anchors.centerIn: parent; text: "󰄬"; color: root.walBackground; font.pixelSize: 10; font.family: "JetBrainsMono Nerd Font" }
+                                width: 16; height: 16; radius: 12; color: root.walColor2
+                                Text { anchors.centerIn: parent; text: "󰄬"; color: root.walBackground; font.pixelSize: 12; font.family: "JetBrainsMono Nerd Font" }
                             }
                         }
                         Text {
@@ -188,7 +188,7 @@ ColumnLayout {
                                 if (index === root.wallSelectedIndex) return root.walColor13
                                 return root.walForeground
                             }
-                            font.pixelSize: 8; font.family: "JetBrainsMono Nerd Font"; font.bold: index === root.wallSelectedIndex || modelData.path === wallService.currentWallpaper
+                            font.pixelSize: 10; font.family: "JetBrainsMono Nerd Font"; font.bold: index === root.wallSelectedIndex || modelData.path === wallService.currentWallpaper
                             elide: Text.ElideMiddle; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignVCenter
                             Behavior on color { ColorAnimation { duration: 120 } }
                         }
@@ -204,11 +204,11 @@ ColumnLayout {
         }
         Text {
             anchors.centerIn: parent; visible: wallService.wallsLoaded && wallService.filteredWallpapers.length === 0
-            text: "No wallpapers found"; color: root.walColor8; font.pixelSize: 14; font.family: "JetBrainsMono Nerd Font"
+            text: "No wallpapers found"; color: root.walColor8; font.pixelSize: 14; font.family: "Inter", "sans-serif"
         }
         Text {
             anchors.centerIn: parent; visible: !wallService.wallsLoaded
-            text: "Loading..."; color: root.walColor8; font.pixelSize: 13; font.family: "JetBrainsMono Nerd Font"
+            text: "Loading..."; color: root.walColor8; font.pixelSize: 13; font.family: "Inter", "sans-serif"
             SequentialAnimation on opacity {
                 loops: Animation.Infinite
                 NumberAnimation { from: 0.4; to: 1.0; duration: 600; easing.type: Easing.InOutSine }
@@ -218,16 +218,16 @@ ColumnLayout {
     }
 
     Rectangle {
-        Layout.fillWidth: true; Layout.preferredHeight: 28; color: Qt.rgba(0, 0, 0, 0.3); radius: 10
+        Layout.fillWidth: true; Layout.preferredHeight: 28; color: Qt.rgba(0, 0, 0, 0.3); radius: 14
         RowLayout {
             anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12
-            Text { text: "←→↑↓ nav"; color: root.walColor8; font.pixelSize: 10; font.family: "JetBrainsMono Nerd Font"; opacity: 0.7 }
+            Text { text: "←→↑↓ nav"; color: root.walColor8; font.pixelSize: 10; font.family: "Inter", "sans-serif"; opacity: 0.7 }
             Item { Layout.fillWidth: true }
-            Text { text: "↵ apply"; color: root.walColor8; font.pixelSize: 10; font.family: "JetBrainsMono Nerd Font"; opacity: 0.7 }
+            Text { text: "↵ apply"; color: root.walColor8; font.pixelSize: 10; font.family: "Inter", "sans-serif"; opacity: 0.7 }
             Item { Layout.fillWidth: true }
-            Text { text: "tab apps"; color: root.walColor8; font.pixelSize: 10; font.family: "JetBrainsMono Nerd Font"; opacity: 0.7 }
+            Text { text: "tab apps"; color: root.walColor8; font.pixelSize: 10; font.family: "Inter", "sans-serif"; opacity: 0.7 }
             Item { Layout.fillWidth: true }
-            Text { text: "esc close"; color: root.walColor8; font.pixelSize: 10; font.family: "JetBrainsMono Nerd Font"; opacity: 0.7 }
+            Text { text: "esc close"; color: root.walColor8; font.pixelSize: 10; font.family: "Inter", "sans-serif"; opacity: 0.7 }
         }
     }
 }

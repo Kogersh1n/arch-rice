@@ -23,7 +23,7 @@ Item {
             Layout.fillWidth: true
             Layout.preferredHeight: 42
             color: Qt.rgba(0, 0, 0, 0.3)
-            radius: 12
+            radius: 18
             border.width: searchInput.activeFocus ? 1 : 0
             border.color: root.walColor5
             
@@ -33,14 +33,14 @@ Item {
                 anchors.rightMargin: 14
                 spacing: 10
                 
-                Text { text: "󰍉"; color: root.walColor8; font.pixelSize: 14; font.family: "JetBrainsMono Nerd Font" }
+                Text { text: "󰍉"; color: root.walColor8; font.pixelSize: 16; font.family: "JetBrainsMono Nerd Font" }
                 
                 TextInput {
                     id: searchInput
                     Layout.fillWidth: true
                     Layout.fillHeight: true
                     color: root.walForeground
-                    font.pixelSize: 14
+                    font.pixelSize: 16
                     font.family: "JetBrainsMono Nerd Font"
                     verticalAlignment: TextInput.AlignVCenter
                     selectByMouse: true
@@ -99,7 +99,7 @@ Item {
                     visible: searchInput.text.length > 0
                     text: "󰅖"
                     color: root.walColor8
-                    font.pixelSize: 12
+                    font.pixelSize: 14
                     font.family: "JetBrainsMono Nerd Font"
                     opacity: clearAppMouse.containsMouse ? 1.0 : 0.7
                     Behavior on opacity { NumberAnimation { duration: 100 } }
@@ -187,7 +187,7 @@ Item {
                         anchors.leftMargin: 14; anchors.rightMargin: 14; anchors.topMargin: 6; anchors.bottomMargin: 6
                         spacing: 12
                         Rectangle {
-                            width: 32; height: 32; radius: 8; color: Qt.rgba(0, 0, 0, 0.2)
+                            width: 32; height: 32; radius: 12; color: Qt.rgba(0, 0, 0, 0.2)
                             Image {
                                 anchors.centerIn: parent
                                 width: 22; height: 22
@@ -206,19 +206,19 @@ Item {
                             Text {
                                 Layout.fillWidth: true; text: modelData.name
                                 color: index === root.selectedIndex ? root.walColor5 : root.walForeground
-                                font.pixelSize: 13; font.family: "JetBrainsMono Nerd Font"; font.bold: index === root.selectedIndex
+                                font.pixelSize: 13; font.family: "Inter", "sans-serif"; font.bold: index === root.selectedIndex
                                 elide: Text.ElideRight
                                 Behavior on color { ColorAnimation { duration: 120 } }
                             }
                             Text {
                                 Layout.fillWidth: true; text: modelData.exec
-                                color: root.walColor8; font.pixelSize: 9; font.family: "JetBrainsMono Nerd Font"
+                                color: root.walColor8; font.pixelSize: 9; font.family: "Inter", "sans-serif"
                                 elide: Text.ElideRight; opacity: 0.7
                             }
                         }
                         Text {
                             visible: index === root.selectedIndex
-                            text: "↵"; color: root.walColor5; font.pixelSize: 14; font.family: "JetBrainsMono Nerd Font"; font.bold: true
+                            text: "↵"; color: root.walColor5; font.pixelSize: 16; font.family: "JetBrainsMono Nerd Font"; font.bold: true
                         }
                     }
                     MouseArea {
@@ -232,21 +232,21 @@ Item {
             }
             Text {
                 anchors.centerIn: parent; visible: appService.filteredApps.length === 0
-                text: "No apps found"; color: root.walColor8; font.pixelSize: 14; font.family: "JetBrainsMono Nerd Font"
+                text: "No apps found"; color: root.walColor8; font.pixelSize: 14; font.family: "Inter", "sans-serif"
             }
         }
 
         Rectangle {
-            Layout.fillWidth: true; Layout.preferredHeight: 28; color: Qt.rgba(0, 0, 0, 0.3); radius: 10
+            Layout.fillWidth: true; Layout.preferredHeight: 28; color: Qt.rgba(0, 0, 0, 0.3); radius: 14
             RowLayout {
                 anchors.fill: parent; anchors.leftMargin: 12; anchors.rightMargin: 12
-                Text { text: "↑↓ nav"; color: root.walColor8; font.pixelSize: 10; font.family: "JetBrainsMono Nerd Font"; opacity: 0.7 }
+                Text { text: "↑↓ nav"; color: root.walColor8; font.pixelSize: 10; font.family: "Inter", "sans-serif"; opacity: 0.7 }
                 Item { Layout.fillWidth: true }
-                Text { text: "↵ launch"; color: root.walColor8; font.pixelSize: 10; font.family: "JetBrainsMono Nerd Font"; opacity: 0.7 }
+                Text { text: "↵ launch"; color: root.walColor8; font.pixelSize: 10; font.family: "Inter", "sans-serif"; opacity: 0.7 }
                 Item { Layout.fillWidth: true }
-                Text { text: "tab walls"; color: root.walColor8; font.pixelSize: 10; font.family: "JetBrainsMono Nerd Font"; opacity: 0.7 }
+                Text { text: "tab walls"; color: root.walColor8; font.pixelSize: 10; font.family: "Inter", "sans-serif"; opacity: 0.7 }
                 Item { Layout.fillWidth: true }
-                Text { text: "esc close"; color: root.walColor8; font.pixelSize: 10; font.family: "JetBrainsMono Nerd Font"; opacity: 0.7 }
+                Text { text: "esc close"; color: root.walColor8; font.pixelSize: 10; font.family: "Inter", "sans-serif"; opacity: 0.7 }
             }
         }
     }

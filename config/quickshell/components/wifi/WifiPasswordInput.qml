@@ -49,7 +49,7 @@ Column {
     Rectangle {
         width: parent.width  
         height: 36           
-        radius: 10
+        radius: 14
         color: Qt.rgba(0, 0, 0, 0.3)
         border.width: 1
         border.color: wifiLoginInput.activeFocus ? walColor5 : Qt.rgba(1, 1, 1, 0.08)
@@ -66,8 +66,8 @@ Column {
             Text {
                 text: "󰧱"
                 color: wifiLoginInput.activeFocus ? walColor5 : walColor8
-                font.pixelSize: 13
-                font.family: "JetBrainsMono Nerd Font"
+                font.pixelSize: 14
+                font.family: "Inter", "sans-serif"
             }
             
             TextInput {
@@ -75,8 +75,8 @@ Column {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 color: walForeground
-                font.pixelSize: 12
-                font.family: "JetBrainsMono Nerd Font"
+                font.pixelSize: 13
+                font.family: "Inter", "sans-serif"
                 verticalAlignment: TextInput.AlignVCenter
                 clip: true
                 activeFocusOnPress: true
@@ -100,7 +100,7 @@ Column {
     Rectangle {
         width: parent.width  
         height: 36
-        radius: 10
+        radius: 14
         color: Qt.rgba(0, 0, 0, 0.3)
         border.width: 1
         border.color: wifiPassInput.activeFocus ? walColor5 : Qt.rgba(1, 1, 1, 0.08)
@@ -116,8 +116,8 @@ Column {
             Text {
                 text: "󰌾"
                 color: wifiPassInput.activeFocus ? walColor5 : walColor8
-                font.pixelSize: 13
-                font.family: "JetBrainsMono Nerd Font"
+                font.pixelSize: 14
+                font.family: "Inter", "sans-serif"
             } 
 
             TextInput {
@@ -125,8 +125,8 @@ Column {
                 Layout.fillWidth: true
                 Layout.fillHeight: true
                 color: walForeground
-                font.pixelSize: 12
-                font.family: "JetBrainsMono Nerd Font"
+                font.pixelSize: 13
+                font.family: "Inter", "sans-serif"
                 verticalAlignment: TextInput.AlignVCenter
                 echoMode: passInputRoot.showPassword ? TextInput.Normal : TextInput.Password
                 clip: true
@@ -154,8 +154,8 @@ Column {
                     anchors.centerIn: parent
                     text: passInputRoot.showPassword ? "󰈈" : "󰈉"
                     color: passInputRoot.showPassword ? walColor5 : walColor8
-                    font.pixelSize: 14
-                    font.family: "JetBrainsMono Nerd Font"
+                    font.pixelSize: 15
+                    font.family: "Inter", "sans-serif"
                 }
                 
                 MouseArea {
@@ -180,9 +180,9 @@ Column {
                     anchors.centerIn: parent
                     text: "󰄬"
                     color: walBackground
-                    font.pixelSize: 13
+                    font.pixelSize: 14
                     font.bold: true
-                    font.family: "JetBrainsMono Nerd Font"
+                    font.family: "Inter", "sans-serif"
                 }
                 
                 MouseArea {

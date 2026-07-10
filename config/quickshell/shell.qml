@@ -18,14 +18,33 @@ ShellRoot {
     property bool dashboardVisible: false
     property bool musicVisible: false
     property bool launcherVisible: false
+    property bool wallpaperVisible: false
     property bool wifiVisible: false
     property bool btVisible: false
     property bool readerVisible: false
-    property int activeTab: 0
     property alias savedGifIndex: stateService.savedGifIndex
 
     property int selectedIndex: 0
     property int wallSelectedIndex: 0
+
+    // --- Centralized Theme System ---
+    property alias theme: themeSystem
+    QtObject {
+        id: themeSystem
+        // Panel settings
+        readonly property int panelRadius: 16
+        readonly property real panelOpacity: 0.92
+        readonly property real borderOpacity: 0.08
+        
+        // Card / Container settings
+        readonly property int cardRadius: 12
+        readonly property color cardBackground: Qt.rgba(root.walBackground.r, root.walBackground.g, root.walBackground.b, 0.45)
+        readonly property color cardBorder: Qt.rgba(root.walForeground.r, root.walForeground.g, root.walForeground.b, 0.12)
+        
+        // Font families
+        readonly property string textFont: "Inter"
+        readonly property string iconFont: "JetBrainsMono Nerd Font"
+    }
 
     // --- Подключение модулей (Сервисов) ---
     StateService { id: stateService }
@@ -49,6 +68,8 @@ ShellRoot {
 
     // Сеть
     property bool wifiEnabled: netService.wifiEnabled
+    property string wifiCurrentSSID: netService.wifiCurrentSSID
+    property int wifiSignal: netService.wifiSignal
     property var wifiNetworks: netService.wifiNetworks
     property bool btEnabled: netService.btEnabled
     property var btPairedDevices: netService.btPairedDevices
@@ -70,28 +91,56 @@ ShellRoot {
         dashboardVisible = false
         musicVisible = false
         launcherVisible = false
+        wallpaperVisible = false
         wifiVisible = false
         btVisible = false
         readerVisible = false
     }
 
-    function toggleLauncher() { launcherVisible = !launcherVisible }
+    function toggleLauncher() {
+        launcherVisible = !launcherVisible
+        if (launcherVisible) {
+            wallpaperVisible = false
+            dashboardVisible = false
+            wifiVisible = false
+            btVisible = false
+        }
+    }
+
+    function toggleWallpaper() {
+        wallpaperVisible = !wallpaperVisible
+        if (wallpaperVisible) {
+            launcherVisible = false
+            dashboardVisible = false
+            wifiVisible = false
+            btVisible = false
+        }
+    }
+
     function toggleMusic() { musicVisible = !musicVisible }
     
     function toggleDashboard() {
         dashboardVisible = !dashboardVisible
-        if (dashboardVisible) { wifiVisible = false; btVisible = false }
+        if (dashboardVisible) { 
+            wifiVisible = false
+            btVisible = false 
+            launcherVisible = false
+            wallpaperVisible = false
+        }
     }
 
-    function toggleReader() {
-        readerVisible = !readerVisible
-        if (readerVisible) closeAllPanels()
-    }
+    // function toggleReader() {
+    //     readerVisible = !readerVisible
+    //     if (readerVisible) closeAllPanels()
+    // }
 
     function toggleWifi() {
         wifiVisible = !wifiVisible
         if (wifiVisible) { 
-            btVisible = false; dashboardVisible = false
+            btVisible = false
+            dashboardVisible = false
+            launcherVisible = false
+            wallpaperVisible = false
             netService.refreshWifi() 
         }
     }
@@ -99,7 +148,10 @@ ShellRoot {
     function toggleBluetooth() {
         btVisible = !btVisible
         if (btVisible) { 
-            wifiVisible = false; dashboardVisible = false
+            wifiVisible = false
+            dashboardVisible = false
+            launcherVisible = false
+            wallpaperVisible = false
             netService.refreshBluetooth() 
         }
     }
@@ -111,6 +163,7 @@ ShellRoot {
     WifiPanel { visible: wifiVisible }
     BluetoothPanel { visible: btVisible }
     LauncherPanel { visible: launcherVisible }
+    WallpaperPanel { visible: wallpaperVisible }
     // Reader { visible: readerVisible }
 
     // --- IPC (Межпроцессное взаимодействие) ---
@@ -123,7 +176,6 @@ ShellRoot {
     IpcHandler {
         target: "launcher"
         function toggle() {
-            root.activeTab = 0
             root.toggleLauncher()
         }
     }
@@ -131,15 +183,7 @@ ShellRoot {
     IpcHandler {
         target: "wallpaper"
         function toggle() {
-            if (!root.launcherVisible) {
-                root.activeTab = 1
-                root.toggleLauncher()
-            } else if (root.activeTab === 1) {
-                root.toggleLauncher()
-            } else {
-                root.activeTab = 1
-                if (!wallService.wallsLoaded) wallService.load()
-            }
+            root.toggleWallpaper()
         }
     }
 

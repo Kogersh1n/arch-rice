@@ -3,11 +3,17 @@ import "../core" // Подтягиваем наш Notch
 
 Notch {
     id: clockNotch
-    width: clockLabel.implicitWidth + 24
+    width: 36
+    height: clockLabel.implicitHeight + 16
     hovered: clockMA.containsMouse
-    
-    // Тултип обновляется через таймер ниже
+
+    property bool showDate: false
+
+    // Tooltip shows full date
     tooltip: Qt.formatDateTime(new Date(), "dddd, MMMM d, yyyy")
+
+    scale: clockMA.containsMouse ? 1.05 : 1.0
+    Behavior on scale { NumberAnimation { duration: 180; easing.type: Easing.OutQuad } }
 
     Item {
         anchors.fill: parent
@@ -15,11 +21,13 @@ Notch {
         Text {
             id: clockLabel
             anchors.centerIn: parent
-            text: Qt.formatDateTime(new Date(), "hh:mm AP")
+            text: clockNotch.showDate ? Qt.formatDateTime(new Date(), "dd\nMM") : Qt.formatDateTime(new Date(), "HH\nmm")
             color: root.walColor5 
-            font.pixelSize: 11
+            font.pixelSize: 12
             font.bold: true
-            font.family: "JetBrainsMono Nerd Font"
+            font.family: root.theme.textFont
+            lineHeight: 0.85
+            horizontalAlignment: Text.AlignHCenter
         }
     }
 
@@ -27,6 +35,7 @@ Notch {
         id: clockMA
         anchors.fill: parent
         hoverEnabled: true
+        onClicked: clockNotch.showDate = !clockNotch.showDate
     }
 
     Timer {
@@ -35,8 +44,7 @@ Notch {
         repeat: true
         triggeredOnStart: true
         onTriggered: {
-            clockLabel.text = Qt.formatDateTime(new Date(), "hh:mm AP")
-            // Обновляем и тултип, чтобы дата менялась в полночь
+            clockLabel.text = clockNotch.showDate ? Qt.formatDateTime(new Date(), "dd\nMM") : Qt.formatDateTime(new Date(), "HH\nmm")
             clockNotch.tooltip = Qt.formatDateTime(new Date(), "dddd, MMMM d, yyyy")
         }
     }

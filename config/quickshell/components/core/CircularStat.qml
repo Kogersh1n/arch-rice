@@ -41,7 +41,7 @@ Item {
                     anchors.horizontalCenter: parent.horizontalCenter
                     text: statRoot.icon
                     color: statRoot.barColor
-                    font.pixelSize: 16
+                    font.pixelSize: 18
                     font.family: "JetBrainsMono Nerd Font"
                     visible: statRoot.icon !== ""
                 }
@@ -50,7 +50,7 @@ Item {
                     text: statRoot.value + "%"
                     color: root.walForeground
                     font.pixelSize: 14
-                    font.family: "JetBrainsMono Nerd Font"
+                    font.family: "Inter", "sans-serif"
                 }
             }
         }
@@ -59,7 +59,7 @@ Item {
             text: statRoot.label
             color: root.walColor8
             font.pixelSize: 11
-            font.family: "JetBrainsMono Nerd Font"
+            font.family: "Inter", "sans-serif"
         }
     }
 }

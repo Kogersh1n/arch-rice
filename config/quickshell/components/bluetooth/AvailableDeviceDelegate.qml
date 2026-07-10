@@ -14,7 +14,7 @@ Rectangle {
 
     width: parent ? parent.width : 0
     height: 44
-    radius: 10
+    radius: 14
     color: btAvailMa.containsMouse ? Qt.rgba(walColor5.r, walColor5.g, walColor5.b, 0.12) : "transparent"
     
     Behavior on color { ColorAnimation { duration: 150; easing.type: Easing.OutQuad } }
@@ -43,7 +43,7 @@ Rectangle {
             id: btIcon
             text: "󰂲"
             color: delegateRoot.connectingMac === devData.mac ? walColor5 : walColor8
-            font.pixelSize: 15
+            font.pixelSize: 17
             font.family: "JetBrainsMono Nerd Font"
             
             SequentialAnimation {
@@ -57,9 +57,9 @@ Rectangle {
         Text {
             text: devData.name
             color: walForeground
-            font.pixelSize: 12
+            font.pixelSize: 13
             font.bold: btAvailMa.containsMouse
-            font.family: "JetBrainsMono Nerd Font"
+            font.family: "Inter", "sans-serif"
             elide: Text.ElideRight
             Layout.fillWidth: true
             
@@ -70,8 +70,8 @@ Rectangle {
             visible: delegateRoot.connectingMac === devData.mac
             text: "Connecting..."
             color: walColor8
-            font.pixelSize: 10
-            font.family: "JetBrainsMono Nerd Font"
+            font.pixelSize: 12
+            font.family: "Inter", "sans-serif"
         }
     }
     

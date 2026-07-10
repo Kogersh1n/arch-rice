@@ -11,8 +11,8 @@ PanelWindow {
     id: btPanel
     visible: true
     exclusionMode: ExclusionMode.Ignore
-    anchors { top: true; right: true }
-    margins { top: 40; right: root.btVisible ? 6 : -350 }
+    anchors { bottom: true; left: true }
+    margins { bottom: root.btVisible ? 12 : -600; left: 70 }
     implicitHeight: 460
     implicitWidth: 320
     color: "transparent"
@@ -20,7 +20,7 @@ PanelWindow {
     
     WlrLayershell.keyboardFocus: root.btVisible ? WlrKeyboardFocus.OnDemand : WlrKeyboardFocus.None
     
-    Behavior on margins.right { NumberAnimation { duration: 320; easing.type: Easing.OutExpo } }
+    Behavior on margins.bottom { NumberAnimation { duration: 220; easing.type: Easing.OutCubic } }
 
     Item {
         anchors.fill: parent
@@ -33,49 +33,19 @@ PanelWindow {
             }
         }
 
-        // Main glassmorphic container
+        // Sleek, minimal background
         Rectangle {
             anchors.fill: parent
-            color: Qt.rgba(root.walBackground.r, root.walBackground.g, root.walBackground.b, 0.78)
-            radius: 20
+            color: Qt.rgba(root.walBackground.r, root.walBackground.g, root.walBackground.b, root.theme.panelOpacity)
+            radius: root.theme.panelRadius
             border.width: 1
-            border.color: Qt.rgba(root.walColor5.r, root.walColor5.g, root.walColor5.b, 0.25)
+            border.color: Qt.rgba(1, 1, 1, root.theme.borderOpacity)
             clip: true
-
-            // --- CREATIVE BACKGROUND DECORATION (Blobs for Glassmorphic Depth) ---
-            Rectangle {
-                width: 140
-                height: 140
-                radius: 70
-                color: Qt.rgba(root.walColor5.r, root.walColor5.g, root.walColor5.b, 0.12)
-                x: -30
-                y: -30
-                
-                SequentialAnimation on scale {
-                    loops: Animation.Infinite
-                    NumberAnimation { from: 1.0; to: 1.15; duration: 4000; easing.type: Easing.InOutSine }
-                    NumberAnimation { from: 1.15; to: 1.0; duration: 4000; easing.type: Easing.InOutSine }
-                }
-            }
-            Rectangle {
-                width: 120
-                height: 120
-                radius: 60
-                color: Qt.rgba(root.walColor1.r, root.walColor1.g, root.walColor1.b, 0.08)
-                x: parent.width - 80
-                y: parent.height - 80
-                
-                SequentialAnimation on scale {
-                    loops: Animation.Infinite
-                    NumberAnimation { from: 1.15; to: 0.95; duration: 5000; easing.type: Easing.InOutSine }
-                    NumberAnimation { from: 0.95; to: 1.15; duration: 5000; easing.type: Easing.InOutSine }
-                }
-            }
 
             ColumnLayout {
                 anchors.fill: parent
-                anchors.margins: 18
-                spacing: 12
+                anchors.margins: 20
+                spacing: 10
 
                 // --- HEADER BLUETOOTH ---
                 RowLayout {
@@ -85,7 +55,7 @@ PanelWindow {
                     Text {
                         text: "󰂯"
                         color: root.walColor5
-                        font.pixelSize: 22
+                        font.pixelSize: 20
                         font.family: "JetBrainsMono Nerd Font"
                     }
                     
@@ -95,7 +65,7 @@ PanelWindow {
                             text: "Bluetooth"
                             color: root.walColor5
                             font.pixelSize: 15
-                            font.bold: true
+                            font.weight: Font.Medium
                             font.family: "JetBrainsMono Nerd Font"
                         }
                         Text {
@@ -103,8 +73,8 @@ PanelWindow {
                                   (netService.btScanning ? "Scanning for devices..." : 
                                   (netService.btConnectingMAC !== "" ? "Connecting device..." : "Adapter active"))
                             color: root.walColor8
-                            font.pixelSize: 9
-                            font.family: "JetBrainsMono Nerd Font"
+                            font.pixelSize: 13
+                            font.family: "Inter", "sans-serif"
                         }
                     }
                     
@@ -118,7 +88,7 @@ PanelWindow {
                         radius: 11
                         color: netService.btEnabled ? root.walColor5 : Qt.rgba(1, 1, 1, 0.15)
                         border.width: 1
-                        border.color: netService.btEnabled ? Qt.rgba(0, 0, 0, 0.1) : Qt.rgba(1, 1, 1, 0.1)
+                        border.color: netService.btEnabled ? Qt.rgba(0, 0, 0, 0.1) : Qt.rgba(1, 1, 1, 0.05)
                         
                         Behavior on color { ColorAnimation { duration: 250; easing.type: Easing.OutQuad } }
                         
@@ -126,7 +96,7 @@ PanelWindow {
                             id: toggleThumb
                             width: toggleMouseArea.pressed ? 20 : 16
                             height: 16
-                            radius: 8
+                            radius: 12
                             y: 2
                             x: netService.btEnabled ? (parent.width - width - 3) : 3
                             color: netService.btEnabled ? root.walBackground : root.walForeground
@@ -153,19 +123,19 @@ PanelWindow {
                         return "Paired Devices (" + len + ")"
                     }
                     color: root.walColor8
-                    font.pixelSize: 11
-                    font.bold: true
-                    font.family: "JetBrainsMono Nerd Font"
+                    font.pixelSize: 12
+                    font.weight: Font.Medium
+                    font.family: "Inter", "sans-serif"
                     visible: netService.btEnabled
                 }
 
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.preferredHeight: 180
-                    color: Qt.rgba(0, 0, 0, 0.25)
-                    radius: 12
+                    color: Qt.rgba(0, 0, 0, 0.15)
+                    radius: 16
                     border.width: 1
-                    border.color: Qt.rgba(1, 1, 1, 0.05)
+                    border.color: Qt.rgba(1, 1, 1, 0.06)
                     clip: true
                     visible: netService.btEnabled
                     
@@ -206,8 +176,8 @@ PanelWindow {
                         visible: netService.btPairedDevices.length === 0
                         text: "No paired devices"
                         color: root.walColor8
-                        font.pixelSize: 11
-                        font.family: "JetBrainsMono Nerd Font"
+                        font.pixelSize: 14
+                        font.family: "Inter", "sans-serif"
                     }
                 }
 
@@ -223,9 +193,9 @@ PanelWindow {
                             return "Available Devices (" + len + ")"
                         }
                         color: root.walColor8
-                        font.pixelSize: 11
-                        font.bold: true
-                        font.family: "JetBrainsMono Nerd Font"
+                        font.pixelSize: 12
+                        font.weight: Font.Medium
+                        font.family: "Inter", "sans-serif"
                     }
                     
                     Item { Layout.fillWidth: true }
@@ -235,7 +205,7 @@ PanelWindow {
                         width: 70
                         height: 24
                         radius: 12
-                        color: btScanBtnMa.containsMouse ? Qt.rgba(root.walColor5.r, root.walColor5.g, root.walColor5.b, 0.2) : Qt.rgba(1, 1, 1, 0.08)
+                        color: btScanBtnMa.containsMouse ? Qt.rgba(root.walColor5.r, root.walColor5.g, root.walColor5.b, 0.2) : Qt.rgba(1, 1, 1, 0.06)
                         border.width: 1
                         border.color: btScanBtnMa.containsMouse ? Qt.rgba(root.walColor5.r, root.walColor5.g, root.walColor5.b, 0.3) : "transparent"
                         
@@ -249,7 +219,7 @@ PanelWindow {
                             Text {
                                 text: netService.btScanning ? "󰑓" : "󰂰"
                                 color: root.walColor5
-                                font.pixelSize: 11
+                                font.pixelSize: 13
                                 font.family: "JetBrainsMono Nerd Font"
                                 transformOrigin: Item.Center
                                 
@@ -264,9 +234,9 @@ PanelWindow {
                             Text {
                                 text: netService.btScanning ? "Scan..." : "Scan"
                                 color: root.walColor5
-                                font.pixelSize: 10
+                                font.pixelSize: 13
                                 font.bold: true
-                                font.family: "JetBrainsMono Nerd Font"
+                                font.family: "Inter", "sans-serif"
                             }
                         }
 
@@ -290,10 +260,10 @@ PanelWindow {
                 Rectangle {
                     Layout.fillWidth: true
                     Layout.fillHeight: true
-                    color: Qt.rgba(0, 0, 0, 0.25)
-                    radius: 12
+                    color: Qt.rgba(0, 0, 0, 0.15)
+                    radius: 16
                     border.width: 1
-                    border.color: Qt.rgba(1, 1, 1, 0.05)
+                    border.color: Qt.rgba(1, 1, 1, 0.06)
                     clip: true
                     visible: netService.btEnabled
                     
@@ -327,8 +297,8 @@ PanelWindow {
                         visible: netService.btAvailableDevices.length === 0 && !netService.btScanning
                         text: "Press Scan to find devices"
                         color: root.walColor8
-                        font.pixelSize: 11
-                        font.family: "JetBrainsMono Nerd Font"
+                        font.pixelSize: 14
+                        font.family: "Inter", "sans-serif"
                     }
                     
                     Text {
@@ -336,8 +306,8 @@ PanelWindow {
                         visible: netService.btScanning && netService.btAvailableDevices.length === 0
                         text: "Scanning..."
                         color: root.walColor8
-                        font.pixelSize: 11
-                        font.family: "JetBrainsMono Nerd Font"
+                        font.pixelSize: 14
+                        font.family: "Inter", "sans-serif"
                     }
                 }
 
@@ -355,14 +325,14 @@ PanelWindow {
                         Text {
                             text: "󰂲"
                             color: root.walColor8
-                            font.pixelSize: 32
+                            font.pixelSize: 34
                             font.family: "JetBrainsMono Nerd Font"
                             Layout.alignment: Qt.AlignHCenter
                         }
                         Text {
                             text: "Bluetooth is turned off"
                             color: root.walColor8
-                            font.pixelSize: 12
+                            font.pixelSize: 14
                             font.family: "JetBrainsMono Nerd Font"
                             Layout.alignment: Qt.AlignHCenter
                         }

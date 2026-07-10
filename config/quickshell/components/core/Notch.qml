@@ -7,9 +7,9 @@ Item {
     property string tooltip: ""
     
     // Дефолтные настройки внешнего вида
-    property color notchColor: Qt.rgba(0, 0, 0, 0.50)
-    property color notchHoverColor: Qt.rgba(0, 0, 0, 0.62)
-    property int notchRadius: 12
+    property color notchColor: Qt.rgba(0, 0, 0, 0.45)
+    property color notchHoverColor: Qt.rgba(0, 0, 0, 0.55)
+    property int notchRadius: 10
     property int notchHeight: 32
 
     default property alias content: contentItem.data
@@ -18,19 +18,17 @@ Item {
     property bool isActive: notchRoot.hovered || notchRoot.activeFocus
 
     Rectangle {
-        anchors.horizontalCenter: parent.horizontalCenter
-        y: -notchRadius
+        anchors.centerIn: parent
         width: parent.width
-        height: parent.height + notchRadius
+        height: parent.height
         radius: notchRadius
         antialiasing: true
         layer.enabled: true
         layer.samples: 4
 
-        gradient: Gradient {
-            GradientStop { position: 0.0; color: notchRoot.isActive ? Qt.rgba(0, 0, 0, 0.45) : Qt.rgba(0, 0, 0, 0.30) }
-            GradientStop { position: 1.0; color: notchRoot.isActive ? notchHoverColor : notchColor }
-        }
+        color: notchRoot.isActive ? notchHoverColor : notchColor
+        border.width: 1
+        border.color: Qt.rgba(1, 1, 1, root.theme.borderOpacity)
     }
 
     Rectangle {
@@ -41,8 +39,8 @@ Item {
         anchors.topMargin: 4
         width: tooltipText.implicitWidth + 16
         height: tooltipText.implicitHeight + 8
-        radius: 6
-        color: Qt.rgba(0, 0, 0, 0.85)
+        radius: 8
+        color: Qt.rgba(0, 0, 0, 0.80)
         opacity: visible ? 1 : 0
         z: 1000
         antialiasing: true
@@ -55,7 +53,7 @@ Item {
             text: notchRoot.tooltip
             color: root.walForeground
             font.pixelSize: 10
-            font.family: "JetBrainsMono Nerd Font"
+            font.family: "Inter", "sans-serif"
         }
     }
 

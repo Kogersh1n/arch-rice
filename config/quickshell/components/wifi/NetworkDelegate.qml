@@ -14,7 +14,7 @@ Rectangle {
 
     width: ListView.view.width
     height: 44
-    radius: 10
+    radius: 14
     color: wifiNetMa.containsMouse ? Qt.rgba(walColor5.r, walColor5.g, walColor5.b, 0.12) : "transparent"
     
     Behavior on color { ColorAnimation { duration: 150; easing.type: Easing.OutQuad } }
@@ -48,7 +48,7 @@ Rectangle {
                 return "󰤯"
             }
             color: walColor5
-            font.pixelSize: 15
+            font.pixelSize: 17
             font.family: "JetBrainsMono Nerd Font"
             
             Behavior on color { ColorAnimation { duration: 200 } }
@@ -61,9 +61,9 @@ Rectangle {
             Text {
                 text: netData.ssid
                 color: walForeground
-                font.pixelSize: 12
+                font.pixelSize: 13
                 font.bold: wifiNetMa.containsMouse
-                font.family: "JetBrainsMono Nerd Font"
+                font.family: "Inter", "sans-serif"
                 elide: Text.ElideRight
                 Layout.fillWidth: true
                 
@@ -73,8 +73,8 @@ Rectangle {
             Text {
                 text: (netData.saved ? "󰆓 Saved" : (netData.security && netData.security !== "--" ? "󰌾 " + netData.security : "Open")) + " · " + netData.signal + "%"
                 color: walColor8
-                font.pixelSize: 9
-                font.family: "JetBrainsMono Nerd Font"
+                font.pixelSize: 11
+                font.family: "Inter", "sans-serif"
             }
         }
     }

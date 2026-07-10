@@ -4,7 +4,10 @@ import "../core"
 Notch {
     width: 36
     hovered: appsMA.containsMouse
-    tooltip: "Apps / Wallpapers"
+    tooltip: "Applications"
+
+    scale: appsMA.containsMouse ? 1.08 : 1.0
+    Behavior on scale { NumberAnimation { duration: 180; easing.type: Easing.OutQuad } }
 
     Item {
         anchors.fill: parent
@@ -12,8 +15,8 @@ Notch {
             anchors.centerIn: parent
             text: "󰣇"
             color: root.walColor1
-            font.pixelSize: 16
-            font.family: "JetBrainsMono Nerd Font"
+            font.pixelSize: 18
+            font.family: root.theme.iconFont
         }
     }
 
@@ -22,16 +25,8 @@ Notch {
         anchors.fill: parent
         hoverEnabled: true
         cursorShape: Qt.PointingHandCursor
-        acceptedButtons: Qt.LeftButton | Qt.RightButton
-        onClicked: function(mouse) {
-            if (mouse.button === Qt.RightButton) {
-                root.activeTab = 1
-                if (!root.launcherVisible) root.toggleLauncher()
-                else { root.activeTab = 1; if (!root.wallsLoaded) root.loadWallpapers() }
-            } else {
-                root.activeTab = 0
-                root.toggleLauncher()
-            }
+        onClicked: {
+            root.toggleLauncher()
         }
     }
 }
