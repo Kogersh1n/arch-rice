@@ -36,33 +36,76 @@ PanelWindow {
         // Main glassmorphic container
         Rectangle {
             anchors.fill: parent
-            color: Qt.rgba(root.walBackground.r, root.walBackground.g, root.walBackground.b, 0.75)
-            radius: 18
+            color: Qt.rgba(root.walBackground.r, root.walBackground.g, root.walBackground.b, 0.78)
+            radius: 20
             border.width: 1
             border.color: Qt.rgba(root.walColor5.r, root.walColor5.g, root.walColor5.b, 0.25)
+            clip: true
+
+            // --- CREATIVE BACKGROUND DECORATION (Blobs for Glassmorphic Depth) ---
+            Rectangle {
+                width: 140
+                height: 140
+                radius: 70
+                color: Qt.rgba(root.walColor5.r, root.walColor5.g, root.walColor5.b, 0.12)
+                x: -30
+                y: -30
+                
+                SequentialAnimation on scale {
+                    loops: Animation.Infinite
+                    NumberAnimation { from: 1.0; to: 1.15; duration: 4000; easing.type: Easing.InOutSine }
+                    NumberAnimation { from: 1.15; to: 1.0; duration: 4000; easing.type: Easing.InOutSine }
+                }
+            }
+            Rectangle {
+                width: 120
+                height: 120
+                radius: 60
+                color: Qt.rgba(root.walColor1.r, root.walColor1.g, root.walColor1.b, 0.08)
+                x: parent.width - 80
+                y: parent.height - 80
+                
+                SequentialAnimation on scale {
+                    loops: Animation.Infinite
+                    NumberAnimation { from: 1.15; to: 0.95; duration: 5000; easing.type: Easing.InOutSine }
+                    NumberAnimation { from: 0.95; to: 1.15; duration: 5000; easing.type: Easing.InOutSine }
+                }
+            }
 
             ColumnLayout {
                 anchors.fill: parent
-                anchors.margins: 16
+                anchors.margins: 18
                 spacing: 12
 
                 // --- HEADER BLUETOOTH ---
                 RowLayout {
                     Layout.fillWidth: true
-                    spacing: 8
+                    spacing: 10
                     
                     Text {
                         text: "󰂯"
                         color: root.walColor5
-                        font.pixelSize: 20
+                        font.pixelSize: 22
                         font.family: "JetBrainsMono Nerd Font"
                     }
-                    Text {
-                        text: "Bluetooth"
-                        color: root.walColor5
-                        font.pixelSize: 15
-                        font.bold: true
-                        font.family: "JetBrainsMono Nerd Font"
+                    
+                    ColumnLayout {
+                        spacing: 1
+                        Text {
+                            text: "Bluetooth"
+                            color: root.walColor5
+                            font.pixelSize: 15
+                            font.bold: true
+                            font.family: "JetBrainsMono Nerd Font"
+                        }
+                        Text {
+                            text: !netService.btEnabled ? "Adapter is disabled" : 
+                                  (netService.btScanning ? "Scanning for devices..." : 
+                                  (netService.btConnectingMAC !== "" ? "Connecting device..." : "Adapter active"))
+                            color: root.walColor8
+                            font.pixelSize: 9
+                            font.family: "JetBrainsMono Nerd Font"
+                        }
                     }
                     
                     Item { Layout.fillWidth: true }
@@ -104,7 +147,11 @@ PanelWindow {
 
                 // --- PAIRED DEVICES LIST ---
                 Text {
-                    text: "Paired Devices"
+                    text: {
+                        let len = netService.btPairedDevices.length
+                        if (len === 0) return "Paired Devices"
+                        return "Paired Devices (" + len + ")"
+                    }
                     color: root.walColor8
                     font.pixelSize: 11
                     font.bold: true
@@ -149,7 +196,7 @@ PanelWindow {
                             }
                         }
                         ScrollBar.vertical: ScrollBar { 
-                            active: pairedList.moving || pairedList.flickable
+                            active: pairedList.moving || pairedList.flicking
                             width: 4 
                         }
                     }
@@ -170,7 +217,11 @@ PanelWindow {
                     visible: netService.btEnabled
                     
                     Text {
-                        text: "Available Devices"
+                        text: {
+                            let len = netService.btAvailableDevices.length
+                            if (len === 0) return "Available Devices"
+                            return "Available Devices (" + len + ")"
+                        }
                         color: root.walColor8
                         font.pixelSize: 11
                         font.bold: true
@@ -200,6 +251,7 @@ PanelWindow {
                                 color: root.walColor5
                                 font.pixelSize: 11
                                 font.family: "JetBrainsMono Nerd Font"
+                                transformOrigin: Item.Center
                                 
                                 RotationAnimation on rotation {
                                     from: 0; to: 360
@@ -265,7 +317,7 @@ PanelWindow {
                             }
                         }
                         ScrollBar.vertical: ScrollBar { 
-                            active: availableList.moving || availableList.flickable
+                            active: availableList.moving || availableList.flicking
                             width: 4 
                         }
                     }
